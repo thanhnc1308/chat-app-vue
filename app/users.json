@@ -1,0 +1,20 @@
+[
+    {
+        "username": "Thanh1", 
+        "email": "thanh1@gmail.com", 
+        "password": "12346578", 
+        "message": "message1"
+    },
+    {
+        "username": "Thanh2", 
+        "email": "thanh2@gmail.com", 
+        "password": "12346578", 
+        "message": "message2"
+    },
+    {
+        "username": "Thanh3", 
+        "email": "thanh3@gmail.com", 
+        "password": "12346578", 
+        "message": "message3"
+    }
+  ]
