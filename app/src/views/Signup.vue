@@ -63,6 +63,10 @@ export default {
     methods: {
         registerUser() {
             this.loading = true;    //when click signup, loading = true
+            // this.$vs.loading();
+            // setTimeout( ()=> {
+            //     this.$vs.loading.close()
+            // }, 2000);
             Axios.post(`${config.apiUrl}/auth/register`, {
                 name: this.name,
                 email: this.email,
@@ -71,7 +75,8 @@ export default {
             .then(response => {
                 this.loading = false;   //when finish the request, loading = false
                 this.submitted = true;
-                this.$noty.success("Successfully register!");
+                this.$vs.notify({text:'Successfully register!',color:'success',position:'top-center'});
+                // this.$noty.success("Successfully register!");
                 //route user to the homepage
                 //$router is included in Vue.use(Router)
                 this.$router.push('/');
@@ -80,7 +85,8 @@ export default {
                 this.loading = false;
                 this.submitted = true;
                 this.errors = response.data;
-                this.$noty.error("Oops, something went wrong!");
+                this.$vs.notify({text:'Oops, something went wrong!',color:'danger',position:'top-center'});
+                // this.$noty.error("Oops, something went wrong!");
             });
         },
     },

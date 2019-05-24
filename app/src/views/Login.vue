@@ -65,7 +65,8 @@ export default {
                 const { data } = response.data;
                 this.$root.auth = data;
                 localStorage.setItem('auth', JSON.stringify(data));
-                this.$noty.success("Successfully login!");
+                this.$vs.notify({text:'Successfully login!',color:'success',position:'top-center'});
+                // this.$noty.success("Successfully login!");
                 //route user to the homepage
                 //$router is included in Vue.use(Router)
                 this.$router.push('/');
@@ -73,7 +74,8 @@ export default {
             .catch( ({response}) => {
                 this.submitted = true;
                 this.loading = false;
-                this.$noty.error("Oops, something went wrong!");
+                this.$vs.notify({text:'Oops, something went wrong!',color:'danger',position:'top-center'});
+                // this.$noty.error("Oops, something went wrong!");
                 //set my own errors notiication
                 if (response.status === 401) {
                     this.errors = {

@@ -49,11 +49,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/variable.scss";
+
 .messages {
   display: flex;
   flex-direction: column;
   padding: 20px;
   overflow-y: auto;
-  height: 100%;
+  height: calc(100% - 60px - 58px - 50px);
+  
+  // top: $header-height  + 58px;
+  bottom: 60px;
+  position: absolute;
+  width: calc(100vw - 600px);
 }
 </style>

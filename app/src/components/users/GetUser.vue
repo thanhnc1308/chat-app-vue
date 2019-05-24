@@ -9,7 +9,6 @@
         {{user.name}}
         <font-awesome-icon :class="['user-status',{'online' : user.isOnline}]" icon="circle"/>
       </h5>
-      <p>Joined: {{calcJoinTime(user.created)}}</p>
     </div>
   </div>
 </template>

@@ -5,7 +5,6 @@
     </div>
     <div class="channel-info">
       <div class="channel-title">{{channel.title}}</div>
-      <p>{{channel.lastMessage}}</p>
     </div>
   </div>
 </template>
@@ -26,7 +25,6 @@ export default {
   display: flex;
   border-bottom: 1px solid $border-color;
   padding: 8px;
-  padding-bottom: 0;
   .channel-image {
     img {
       max-width: 100%;

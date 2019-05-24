@@ -1,7 +1,7 @@
 <template>
   <div :class="{'message' : true, 'me': message.me}">
     <div class="message-user-image">
-      <img src="@/assets/images/avatar.png" alt class="img-responsive">
+      <vs-avatar :text="getAuthor"/>
     </div>
     <div class="message-body">
       <div class="message-author">{{message.me ? 'You' : message.author}}</div>
@@ -19,6 +19,9 @@ export default {
     time() {
       // const time = new Date(this.message.timestamp);
       // return `${time.getHours()}:${leftPad(time.getMinutes(), 2, '0')}`;
+    },
+    getAuthor() {
+      return this.message.me ? 'You' : this.message.author;
     }
   }
 };

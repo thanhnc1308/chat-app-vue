@@ -1,10 +1,14 @@
 <template>
   <div class="messenger-input">
     <div class="text-input">
-      <textarea name id placeholder="Write your messages..."></textarea>
+      <!-- <textarea name id placeholder="Write your messages..."></textarea> -->
+      <vs-textarea v-model="inputMessage" />
     </div>
     <div class="actions">
-      <button class="btn btn-primary send">Send</button>
+      <!-- <button class="btn btn-primary send">Send</button> -->
+      <div class="send">
+        <vs-button color="primary" type="border" icon="send"></vs-button>
+      </div>
     </div>
   </div>
 </template>
@@ -23,7 +27,8 @@ export default {
   },
   data() {
     return {
-      message: ""
+      message: "",
+      inputMessage: "",
     };
   }
 };
@@ -34,24 +39,22 @@ export default {
 
 .messenger-input {
   border-top: 1px solid $border-color;
-  height: 80px;
+  height: 60px;
+  position: absolute;
+  bottom: 0;
+  width: calc(100vw - 600px);
   display: flex;
   flex-direction: row;
   .text-input {
     flex-grow: 1;
     textarea {
-      border: 0 none;
-      width: 100%;
-      height: 100%;
-      padding: 8px 15px;
+
     }
   }
   .actions {
     display: flex;
-    button.send {
+    .send {
       color: #fff;
-      border: 0 none;
-      padding: 7px 15px;
       margin: auto 10px;
     }
   }
