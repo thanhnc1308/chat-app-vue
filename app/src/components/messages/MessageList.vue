@@ -1,23 +1,32 @@
 <template>
   <div>
     <div class="messages">
-      <Message v-for="message in messages" :key="message.id" :message="message"/>
+      <VuePerfectScrollbar class="scroll-area" v-once :settings="settings">
+        <Message v-for="message in messages" :key="message.id" :message="message"/>
+      </VuePerfectScrollbar>
     </div>
   </div>
 </template>
 
 <script>
 import Message from "@/components/messages/Message.vue";
+import VuePerfectScrollbar from "vue-perfect-scrollbar";
 
 export default {
   // props: ["messages"],
   data() {
     return {
-      messages: []
+      messages: [],
+      settings: {
+        //perfect scrollbar settings
+        maxScrollbarLength: 60,
+        wheelSpeed: 0.6
+      },
     };
   },
   components: {
-    Message
+    Message,
+    VuePerfectScrollbar,
   },
   mounted() {
     this.addTestMessage();
@@ -41,7 +50,6 @@ export default {
           me: isMe
         };
         this.messages.push(newMsg);
-
       }
     }
   }
@@ -55,12 +63,19 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  overflow-y: auto;
+  // overflow-y: auto;
   height: calc(100% - 60px - 58px - 50px);
-  
+
   // top: $header-height  + 58px;
   bottom: 60px;
   position: absolute;
   width: calc(100vw - 600px);
+
+  .scroll-area {
+    position: relative;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

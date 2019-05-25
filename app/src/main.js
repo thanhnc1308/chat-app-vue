@@ -35,7 +35,11 @@ library.add(faCircle, faCog, faEdit);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
+// tailwind
+import '@/assets/css/tailwind.css';
 
+// i18n
+import i18n from './i18n/i18n';
 
 //get auth from localStorage
 const authData = localStorage.getItem('auth');
@@ -44,6 +48,7 @@ Vue.config.productionTip = false
 
 new Vue({
   router,
+  i18n,
   data: {
     auth: authData ? JSON.parse(authData) : {}
   },

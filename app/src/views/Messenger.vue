@@ -12,7 +12,11 @@
         <h2>Title</h2>
       </div>
       <div class="right-header">
-        <UserProfile></UserProfile>
+        <div class="actions">
+          <phone-icon class="custom-class"></phone-icon>
+          <video-icon class="custom-class"></video-icon>
+          <more-horizontal-icon class="custom-class"></more-horizontal-icon>
+        </div>
       </div>
     </div>
     <div class="main">
@@ -21,6 +25,7 @@
       </div>
       <div class="content-main">
         <MessageList></MessageList>
+        <!-- <MessagesList></MessagesList> -->
         <MessageInput></MessageInput>
       </div>
       <div class="right-sidebar">
@@ -42,12 +47,18 @@
 <script>
 import UserProfile from "@/components/users/UserProfile.vue";
 import MessageList from "@/components/messages/MessageList.vue";
+import MessagesList from "@/components/messages/MessagesList.vue";
+import Test from "@/components/messages/Test.vue";
 import MessageInput from "@/components/messages/MessageInput.vue";
 import ChannelList from "@/components/channels/ChannelList.vue";
 import Channel from "@/components/channels/Channel.vue";
 import GetChannel from "@/components/channels/GetChannel.vue";
 import UserList from "@/components/users/UserList.vue";
 import GetUser from "@/components/users/GetUser.vue";
+
+import { VideoIcon } from "vue-feather-icons";
+import { PhoneIcon } from "vue-feather-icons";
+import { MoreHorizontalIcon } from "vue-feather-icons";
 
 export default {
   components: {
@@ -57,7 +68,12 @@ export default {
     ChannelList,
     UserList,
     GetChannel,
-    GetUser
+    GetUser,
+    VideoIcon,
+    PhoneIcon,
+    MoreHorizontalIcon,
+    MessagesList,
+    Test,
   },
   data() {
     return {
@@ -106,7 +122,8 @@ export default {
 .app-messenger {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 58px); // - height of navbar
+  height: calc(100vh - 50px); // - height of navbar
+  overflow: hidden;
   .header {
     height: $header-height;
     display: flex;
@@ -153,31 +170,41 @@ export default {
 
     .right-header {
       min-width: $right-sidebar-width;
+      .actions {
+        display: flex;
+        justify-content: flex-end;
+        vertical-align: middle;
+        margin-top: 10px;
+        .custom-class {
+          margin-right: 10px;
+          cursor: pointer;
+        }
+      }
     }
   }
 
   .main {
     display: flex;
-    height: calc(100% - $header-height);
+    height: 100%;
     overflow: hidden;
     .left-sidebar {
       min-width: $left-sidebar-width;
       border-right: 1px solid $border-color;
       height: 100%;
-      overflow-y: overlay;
+      overflow-y: auto;
     }
 
     .content-main {
       flex-grow: 1;
       flex-direction: column;
-      height: 100%;  
+      height: 100%;
       width: calc(100vw - 600px);
     }
 
     .right-sidebar {
       min-width: $right-sidebar-width;
       border-left: 1px solid $border-color;
-      overflow-y: overlay;
+      overflow-y: hidden;
     }
   }
 }

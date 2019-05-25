@@ -1,21 +1,27 @@
 <template>
   <div class="messenger-input">
     <div class="text-input">
-      <!-- <textarea name id placeholder="Write your messages..."></textarea> -->
-      <vs-textarea v-model="inputMessage" />
+      <vs-textarea v-model="inputMessage" placeholder="Write your messages..."/>
     </div>
     <div class="actions">
       <!-- <button class="btn btn-primary send">Send</button> -->
       <div class="send">
-        <vs-button color="primary" type="border" icon="send"></vs-button>
+        <!-- <vs-button color="primary" type="border" icon="send"></vs-button> -->
+        <send-icon class="custom-class"></send-icon>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+
+import { SendIcon } from 'vue-feather-icons';
+
 export default {
   name: "MessageInput",
+  components: {
+    SendIcon,
+  },
   props: ["onSend"],
   methods: {
     onKeyDown() {
@@ -56,6 +62,15 @@ export default {
     .send {
       color: #fff;
       margin: auto 10px;
+      .custom-class {
+        color: #3498db;
+        border: 1px solid #3498db;
+        padding: 5px;
+        border-radius: 4px;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+      }
     }
   }
 }

@@ -38,20 +38,12 @@ body {
   padding: 0;
 }
 
-#app {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  width: 100%;
-  box-sizing: border-box;
-}
-
 .bg-navbar {
   background: #3498db;
 }
 
-.reset {
-  margin: 0 !important;
-  padding: 0 !important;
+#app {
+  overflow: hidden;
 }
+
 </style>
