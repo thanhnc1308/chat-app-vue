@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="messages">
-      <VuePerfectScrollbar class="scroll-area" v-once :settings="settings">
+      <VuePerfectScrollbar class="scroll-area" :settings="settings">
         <Message v-for="message in messages" :key="message.id" :message="message"/>
       </VuePerfectScrollbar>
     </div>

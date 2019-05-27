@@ -185,13 +185,13 @@ export default {
 
   .main {
     display: flex;
-    height: 100%;
+    height: calc(100% - 50px); //$header-height
     overflow: hidden;
     .left-sidebar {
       min-width: $left-sidebar-width;
       border-right: 1px solid $border-color;
       height: 100%;
-      overflow-y: auto;
+      // overflow-y: auto;
     }
 
     .content-main {

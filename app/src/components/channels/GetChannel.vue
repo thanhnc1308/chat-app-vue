@@ -1,7 +1,7 @@
 <template>
   <div class="channel">
     <div class="channel-image">
-      <vs-avatar text="channel.title" />
+      <vs-avatar text="channel.title"/>
     </div>
     <div class="channel-info">
       <div class="channel-title">{{channel.title}}</div>
@@ -12,8 +12,7 @@
 <script>
 export default {
   props: ["channel"],
-  computed: {
-  }
+  computed: {}
 };
 </script>
 
@@ -113,6 +112,7 @@ export default {
     padding-left: 8px;
     padding-right: 8px;
     overflow: hidden;
+    margin-top: 10px;
     h2 {
       font-size: 13px;
       font-weight: 400;

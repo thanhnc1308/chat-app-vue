@@ -33,9 +33,9 @@ export default {
 .user {
   display: flex;
   border-bottom: 1px solid $border-color;
-  padding: 8px;
+  // padding: 8px;
   .user-image {
-    width: 30px;
+    // width: 30px;
     position: relative;
     img {
       width: 30px;
@@ -44,9 +44,9 @@ export default {
     }
   }
   .user-info {
-    padding-left: 8px;
+    // padding-left: 8px;
     flex-grow: 1;
-
+    margin-top: 13px;
     h5 {
       font-size: 14px;
 

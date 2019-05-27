@@ -45,7 +45,7 @@ export default {
     }
   }
   .user-info {
-    padding-left: 8px;
+    margin-left: 16px;
     flex-grow: 1;
 
     h5 {

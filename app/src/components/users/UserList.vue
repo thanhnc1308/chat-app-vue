@@ -1,22 +1,31 @@
 <template>
   <div>
     <div class="users">
-      <User v-for="user in users" :key="user.id" :user="user"/>
+      <VuePerfectScrollbar class="scroll-area" :settings="settings">
+        <User v-for="user in users" :key="user.id" :user="user"/>
+      </VuePerfectScrollbar>
     </div>
   </div>
 </template>
 
 <script>
 import User from "@/components/users/User.vue";
+import VuePerfectScrollbar from "vue-perfect-scrollbar";
 
 export default {
   data() {
     return {
-      users: []
+      users: [],
+      settings: {
+        //perfect scrollbar settings
+        maxScrollbarLength: 60,
+        wheelSpeed: 0.6
+      }
     };
   },
   components: {
     User,
+    VuePerfectScrollbar
   },
   mounted() {
     this.addTestUsers();
@@ -35,7 +44,7 @@ export default {
           id: `${i}`,
           name: `User ${i}`,
           isOnline: isOnline,
-          created: new Date(),
+          created: new Date()
         };
         this.users.push(newUser);
       }
@@ -46,6 +55,14 @@ export default {
 
 <style lang="scss" scoped>
 .users {
+  overflow-y: auto;
+  height: calc(100vh - 50px - 58px - 80px);
 
+  .scroll-area {
+    position: relative;
+    margin: auto;
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>
