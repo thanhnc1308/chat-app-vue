@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="messages">
-      <VuePerfectScrollbar class="scroll-area" :settings="settings">
+      <VuePerfectScrollbar v-chat-scroll class="scroll-area" :settings="settings">
         <Message v-for="message in messages" :key="message.id" :message="message"/>
       </VuePerfectScrollbar>
     </div>
@@ -11,6 +11,7 @@
 <script>
 import Message from "@/components/messages/Message.vue";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
+import io from 'socket.io-client';
 
 export default {
   // props: ["messages"],

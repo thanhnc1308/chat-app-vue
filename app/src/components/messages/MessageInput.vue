@@ -1,13 +1,16 @@
 <template>
   <div class="messenger-input">
     <div class="text-input">
-      <vs-textarea v-model="inputMessage" placeholder="Write your messages..."/>
+      <!-- handle enter to send messages and shift enter to new line -->
+      <vs-textarea  @keydown.enter.exact.prevent @keyup.enter.exact="sendMessage()"
+    @keydown.enter.shift.exact="newline" v-model="inputMessage" placeholder="Write your messages..."/>
+      <!-- <vs-input class="inputx" @keypress.enter="sendMessage()" v-model="inputMessage" placeholder="Write your messages..."/> -->
     </div>
     <div class="actions">
       <!-- <button class="btn btn-primary send">Send</button> -->
       <div class="send">
         <!-- <vs-button color="primary" type="border" icon="send"></vs-button> -->
-        <send-icon class="custom-class"></send-icon>
+        <send-icon @click="sendMessage()" class="custom-class"></send-icon>
       </div>
     </div>
   </div>
@@ -22,14 +25,17 @@ export default {
   components: {
     SendIcon,
   },
-  props: ["onSend"],
+  props: [""],
   methods: {
-    onKeyDown() {
-      if (this.message) {
-        this.onSend(this.message);
-        this.message = "";
+    sendMessage() {
+      if (this.inputMessage) {
+        // this.onSend(this.inputMessage);
+        this.inputMessage = "";
       }
-    }
+    },
+    newline() {
+      this.value = `${this.value}\n`;
+    },
   },
   data() {
     return {

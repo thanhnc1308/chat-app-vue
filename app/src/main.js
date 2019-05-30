@@ -44,6 +44,11 @@ import i18n from './i18n/i18n';
 //get auth from localStorage
 const authData = localStorage.getItem('auth');
 
+import * as io from 'socket.io-client'
+// auto scroll last message
+import VueChatScroll from 'vue-chat-scroll'
+Vue.use(VueChatScroll)
+
 Vue.config.productionTip = false
 
 new Vue({

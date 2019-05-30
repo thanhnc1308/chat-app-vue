@@ -2,7 +2,7 @@
   <div>
     <div class="channels">
       <VuePerfectScrollbar class="scroll-area" :settings="settings">
-        <Channel v-for="channel in channels" :key="channel.id" :channel="channel"/>
+        <Channel @changeActiveChannel="changeActiveChannel($event)" :isActive="channel.id === activeChannel" v-for="channel in channels" :key="channel.id" :channel="channel"/>
       </VuePerfectScrollbar>
     </div>
   </div>
@@ -16,6 +16,7 @@ export default {
   data() {
     return {
       channels: [],
+      activeChannel: 0,
       settings: {
         //perfect scrollbar settings
         maxScrollbarLength: 60,
@@ -40,6 +41,10 @@ export default {
         };
         this.channels.push(newChannel);
       }
+    },
+    changeActiveChannel(newActiveChannelId) {
+      this.activeChannel = newActiveChannelId;
+      this.$emit('changeTitleActiveChannel', this.channels[newActiveChannelId]);
     }
   }
 };

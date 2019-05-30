@@ -5,11 +5,12 @@
         <div class="actions">
           <font-awesome-icon class="ic-settings" icon="cog"/>
           <h5 class="title-messenger">Messenger</h5>
-          <font-awesome-icon class="ic-edit" icon="edit"/>
+          <font-awesome-icon @click="writeNewMessage = !writeNewMessage" class="ic-edit" icon="edit"/>
         </div>
       </div>
       <div class="content-header">
-        <h2>Title</h2>
+        <h2 v-if="!writeNewMessage">{{activeChannelTitle}}</h2>
+        <vs-input v-else @blur="writeNewMessage = false" class="inputx" placeholder="Write message to..." v-model="toUser"/>
       </div>
       <div class="right-header">
         <div class="actions">
@@ -21,7 +22,7 @@
     </div>
     <div class="main">
       <div class="left-sidebar">
-        <ChannelList></ChannelList>
+        <ChannelList @changeTitleActiveChannel="updateNewTitleActiveChannel($event)"></ChannelList>
       </div>
       <div class="content-main">
         <MessageList></MessageList>
@@ -78,7 +79,10 @@ export default {
   data() {
     return {
       activeChannel: {},
-      usersInChannel: []
+      usersInChannel: [],
+      activeChannelTitle: 'Title',
+      toUser: '',
+      writeNewMessage: false,
     };
   },
   mounted() {
@@ -111,7 +115,10 @@ export default {
         };
         this.usersInChannel.push(newUser);
       }
-    }
+    },
+    updateNewTitleActiveChannel(newActiveChannel) {
+      this.activeChannelTitle = newActiveChannel.title;
+    },
   }
 };
 </script>
@@ -165,6 +172,9 @@ export default {
       h2 {
         line-height: $header-height;
         text-align: center;
+      }
+      .inputx {
+        margin-top: 5px;
       }
     }
 

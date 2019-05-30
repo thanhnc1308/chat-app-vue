@@ -1,5 +1,5 @@
 <template>
-  <div class="channel">
+  <div class="channel" @click="activeChannel()" @mouseenter="isHover = true" @mouseleave="isHover = false" :class="{'active' : isActive, 'hover' : isHover}">
     <div class="channel-image">
       <vs-avatar text="channel.title" />
     </div>
@@ -12,14 +12,31 @@
 
 <script>
 export default {
-  props: ["channel"],
+  props: ["channel", "isActive"],
+  data() {
+    return {
+      isHover: false,
+    }
+  },
   computed: {
-  }
+  },
+  methods: {
+    activeChannel() {
+      this.$emit('changeActiveChannel', this.channel.id);
+    }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 @import "@/assets/scss/variable.scss";
+.active {
+  background-color: rgba(0, 0, 0, .05);
+}
+
+.hover {
+  background-color: rgba(0, 0, 0, .05);
+}
 
 .channel {
   cursor: pointer;
