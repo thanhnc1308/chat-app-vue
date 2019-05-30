@@ -1,5 +1,5 @@
 <template>
-  <div class="channel" @click="activeChannel()" @mouseenter="isHover = true" @mouseleave="isHover = false" :class="{'active' : isActive, 'hover' : isHover}">
+  <div class="channel" :channel-id="channel.id" @click="activeChannel()" @mouseenter="isHover = true" @mouseleave="isHover = false" :class="{'active' : isActive, 'hover' : isHover}">
     <div class="channel-image">
       <vs-avatar text="channel.title" />
     </div>

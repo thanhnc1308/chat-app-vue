@@ -1,5 +1,5 @@
 <template>
-  <div class="user">
+  <div class="user" :user-id="user.id" @click="activeUser()" @mouseenter="isHover = true" @mouseleave="isHover = false" :class="{'active' : isActive, 'hover' : isHover}">
     <div class="user-image">
       <vs-avatar  text="user.name"/>
       <span :class="['user-status', {'online' : user.isOnline}]"></span>
@@ -18,11 +18,19 @@
 import moment from "moment";
 
 export default {
-  props: ["user"],
+  props: ["user", "isActive"],
+  data() {
+    return {
+      isHover: false,
+    }
+  },
   computed: {},
   methods: {
     calcJoinTime(createdTime) {
       return moment(createdTime).fromNow();
+    },
+    activeUser() {
+      this.$emit('changeActiveUser', this.user.id);
     }
   }
 };
@@ -31,8 +39,17 @@ export default {
 <style lang="scss" scoped>
 @import "@/assets/scss/variable.scss";
 
+.active {
+  background-color: rgba(0, 0, 0, .05);
+}
+
+.hover {
+  background-color: rgba(0, 0, 0, .05);
+}
+
 .user {
   display: flex;
+  cursor: pointer;
   border-bottom: 1px solid $border-color;
   padding: 8px;
   .user-image {

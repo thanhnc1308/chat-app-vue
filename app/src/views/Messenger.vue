@@ -61,6 +61,8 @@ import { VideoIcon } from "vue-feather-icons";
 import { PhoneIcon } from "vue-feather-icons";
 import { MoreHorizontalIcon } from "vue-feather-icons";
 
+// import eventBus from '@/main.js';
+
 export default {
   components: {
     UserProfile,
@@ -74,13 +76,12 @@ export default {
     PhoneIcon,
     MoreHorizontalIcon,
     MessagesList,
-    Test,
   },
   data() {
     return {
       activeChannel: {},
       usersInChannel: [],
-      activeChannelTitle: 'Title',
+      activeChannelTitle: '',
       toUser: '',
       writeNewMessage: false,
     };

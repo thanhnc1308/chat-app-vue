@@ -2,7 +2,7 @@
   <div>
     <div class="users">
       <VuePerfectScrollbar class="scroll-area" :settings="settings">
-        <User v-for="user in users" :key="user.id" :user="user"/>
+        <User @changeActiveUser="changeActiveUser($event)" v-for="user in users" :key="user.id" :user="user"/>
       </VuePerfectScrollbar>
     </div>
   </div>
@@ -48,7 +48,11 @@ export default {
         };
         this.users.push(newUser);
       }
-    }
+    },
+    changeActiveUser(newActiveUserId) {
+      this.activeUser = newActiveUserId;
+      this.$emit('changeTitleActiveUser', this.users[newActiveUserId]);
+    },
   }
 };
 </script>
