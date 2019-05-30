@@ -55,7 +55,7 @@ export default {
     methods: {
         loginUser() {
             this.loading = true;
-            Axios.post(`${config.apiUrl}/auth/login`, {
+            Axios.post(`${config.apiUrl}/api/users/login`, {
                 email: this.email,
                 password: this.password
             })

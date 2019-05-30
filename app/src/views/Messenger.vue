@@ -10,7 +10,7 @@
       </div>
       <div class="content-header">
         <h2 v-if="!writeNewMessage">{{activeChannelTitle}}</h2>
-        <vs-input v-else @blur="writeNewMessage = false" class="inputx" placeholder="Write message to..." v-model="toUser"/>
+        <vs-input v-else @keyup.enter="onSubmit()" v-model.trim="room.room_name" @blur="writeNewMessage = false" class="inputx" placeholder="Write message to..." v-model="toUser"/>
       </div>
       <div class="right-header">
         <div class="actions">
@@ -61,6 +61,8 @@ import { VideoIcon } from "vue-feather-icons";
 import { PhoneIcon } from "vue-feather-icons";
 import { MoreHorizontalIcon } from "vue-feather-icons";
 
+import config from '@/config';
+
 // import eventBus from '@/main.js';
 
 export default {
@@ -84,6 +86,8 @@ export default {
       activeChannelTitle: '',
       toUser: '',
       writeNewMessage: false,
+      errors: [],
+      room: {},
     };
   },
   mounted() {
@@ -120,6 +124,18 @@ export default {
     updateNewTitleActiveChannel(newActiveChannel) {
       this.activeChannelTitle = newActiveChannel.title;
     },
+    onSubmit (evt) {
+      evt.preventDefault()
+      axios.post(`${config.apiUrl}/api/room`, this.room)
+      .then(response => {
+        this.$router.push({
+          name: 'RoomList'
+        })
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
+    }
   }
 };
 </script>

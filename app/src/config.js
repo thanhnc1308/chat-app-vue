@@ -3,5 +3,5 @@
 */
 
 export default {
-    apiUrl: 'https://react-blog-api.bahdcasts.com/api',
+    apiUrl: 'http://ict61-chatapp.herokuapp.com',
 }

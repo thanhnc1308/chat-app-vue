@@ -69,3 +69,9 @@ export default {
     },
 }
 </script>
+
+<style scoped>
+.navbar {
+      z-index: 10;
+}
+</style>

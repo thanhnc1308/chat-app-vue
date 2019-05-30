@@ -11,15 +11,24 @@
 <script>
 import Channel from "@/components/channels/Channel.vue";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
+import Axios from 'axios';
+import config from '@/config';
 // import eventBus from '@/main.js';
 
 export default {
-  // created() {
-  //   eventBus.$emit('firstChannel', this.channels[1]);
-  // },
+  created () {
+    Axios.get(`${config.apiUrl}/api/room`)
+    .then(response => {
+      this.channels = response.data
+    })
+    .catch(e => {
+      this.errors.push(e)
+    })
+  },
   data() {
     return {
       channels: [],
+      errors: [],
       activeChannel: 0,
       settings: {
         //perfect scrollbar settings

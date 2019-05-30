@@ -67,7 +67,7 @@ export default {
             // setTimeout( ()=> {
             //     this.$vs.loading.close()
             // }, 2000);
-            Axios.post(`${config.apiUrl}/auth/register`, {
+            Axios.post(`${config.apiUrl}/api/users/signup`, {
                 name: this.name,
                 email: this.email,
                 password: this.password
