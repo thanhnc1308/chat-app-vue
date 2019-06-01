@@ -3,5 +3,6 @@
 */
 
 export default {
-    apiUrl: 'http://ict61-chatapp.herokuapp.com',
+    apiUrlServer: 'http://ict61-chatapp.herokuapp.com',
+    apiUrl: 'http://localhost:3001',
 }

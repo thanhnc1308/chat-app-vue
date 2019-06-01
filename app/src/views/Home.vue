@@ -23,7 +23,7 @@ export default {
       users: []
     };
   },
-  methods: {
+        methods: {
     joinServer: function() {
       this.socket.on("loggedIn", data => {
         this.messages = data.messages;

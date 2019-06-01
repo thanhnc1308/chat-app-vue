@@ -3,7 +3,7 @@
     <div class="text-input">
       <!-- handle enter to send messages and shift enter to new line -->
       <vs-textarea  @keydown.enter.exact.prevent @keyup.enter.exact="sendMessage()"
-    @keydown.enter.shift.exact="newline" v-model="inputMessage" placeholder="Write your messages..."/>
+    @keydown.enter.shift.exact="newline" v-model.trim="inputMessage" placeholder="Write your messages..."/>
       <!-- <vs-input class="inputx" @keypress.enter="sendMessage()" v-model="inputMessage" placeholder="Write your messages..."/> -->
     </div>
     <div class="actions">
@@ -19,6 +19,7 @@
 <script>
 
 import { SendIcon } from 'vue-feather-icons';
+import { mapGetters } from 'vuex';
 
 export default {
   name: "MessageInput",
