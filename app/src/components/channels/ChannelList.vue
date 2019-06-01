@@ -17,13 +17,13 @@ import config from '@/config';
 
 export default {
   created () {
-    Axios.get(`${config.apiUrl}/api/room`)
-    .then(response => {
-      // this.channels = response.data
-    })
-    .catch(e => {
-      this.errors.push(e)
-    })
+    // Axios.get(`${config.apiUrl}/api/room`)
+    // .then(response => {
+    //   // this.channels = response.data
+    // })
+    // .catch(e => {
+    //   this.errors.push(e)
+    // })
   },
   data() {
     return {

@@ -1,9 +1,12 @@
 <template>
   <div>
-    <div class="messages">
-      <VuePerfectScrollbar v-chat-scroll class="scroll-area" :settings="settings">
+    <div class="messages" v-if="messages">
+      <transition-group name="slideDown">
+        <VuePerfectScrollbar v-chat-scroll class="scroll-area" :settings="settings">
         <Message v-for="message in messages" :key="message.id" :message="message"/>
       </VuePerfectScrollbar>
+      </transition-group>
+      
     </div>
   </div>
 </template>
@@ -12,12 +15,17 @@
 import Message from "@/components/messages/Message.vue";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
 import io from 'socket.io-client';
+import { mapGetters } from 'vuex';
 
 export default {
   // props: ["messages"],
+  computed: {
+        ...mapGetters(['getUserData'])
+    },
   data() {
     return {
       messages: [],
+      user: null,
       settings: {
         //perfect scrollbar settings
         maxScrollbarLength: 60,
@@ -25,14 +33,22 @@ export default {
       },
     };
   },
+  created() {
+        this.user = this.getUserData;
+    },
   components: {
     Message,
     VuePerfectScrollbar,
   },
   mounted() {
     this.addTestMessage();
+    // this.scrollMessages();
   },
   methods: {
+    scrollMessages() {
+            var container = this.$refs.messages;
+            container.scrollTop = container.scrollHeight;
+        },
     addTestMessage() {
       let isMe = false;
 
@@ -45,15 +61,19 @@ export default {
 
         const newMsg = {
           id: `${i}`,
-          author: `Thanh ${i}`,
-          text: `Hello there... ${i}`,
+          user: `Thanh ${i}`,
+          content: `Hello there... ${i}`,
           avatar: "@/assets/images/avatar.png",
-          me: isMe
+          admin: isMe,
+          created_at: new Date(),
         };
         this.messages.push(newMsg);
       }
     }
-  }
+  },
+  //   updated() {
+  //       this.scrollMessages();
+  //   }
 };
 </script>
 

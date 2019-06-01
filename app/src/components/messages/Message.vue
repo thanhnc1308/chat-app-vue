@@ -1,12 +1,13 @@
 <template>
-  <div :class="{'message' : true, 'me': message.me}">
+  <div :class="{'message' : true, 'me': message.admin}">
     <div class="message-user-image">
       <vs-avatar :text="getAuthor"/>
     </div>
     <div class="message-body">
-      <div class="message-author">{{message.me ? 'You' : message.author}}</div>
+      <div class="message-author">{{message.admin ? 'You' : message.user}}</div>
       <div class="message-text">
-        <p>{{message.text}}</p>
+        <span>{{message.content}}</span>
+        <span>{{ moment(message.created_at).fromNow() }}</span>
       </div>
     </div>
   </div>
@@ -21,7 +22,7 @@ export default {
       // return `${time.getHours()}:${leftPad(time.getMinutes(), 2, '0')}`;
     },
     getAuthor() {
-      return this.message.me ? 'You' : this.message.author;
+      return this.message.admin ? 'You' : this.message.user;
     }
   }
 };

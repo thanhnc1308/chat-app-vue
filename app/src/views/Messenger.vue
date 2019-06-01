@@ -49,7 +49,6 @@
 import UserProfile from "@/components/users/UserProfile.vue";
 import MessageList from "@/components/messages/MessageList.vue";
 import MessagesList from "@/components/messages/MessagesList.vue";
-import Test from "@/components/messages/Test.vue";
 import MessageInput from "@/components/messages/MessageInput.vue";
 import ChannelList from "@/components/channels/ChannelList.vue";
 import Channel from "@/components/channels/Channel.vue";
