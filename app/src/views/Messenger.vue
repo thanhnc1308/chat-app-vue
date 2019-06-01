@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="content-header">
-        <h2 v-if="!writeNewMessage">{{activeChannelTitle}}</h2>
+        <h2 v-if="!writeNewMessage">{{activeRoomTitle}}</h2>
         <vs-input v-else @keyup.enter="onSubmit()" v-model.trim="room.room_name" @blur="writeNewMessage = false" class="inputx" placeholder="Write message to..." v-model="toUser"/>
       </div>
       <div class="right-header">
@@ -22,7 +22,7 @@
     </div>
     <div class="main">
       <div class="left-sidebar">
-        <ChannelList @changeTitleActiveChannel="updateNewTitleActiveChannel($event)"></ChannelList>
+        <RoomList @changeTitleActiveRoom="updateNewTitleActiveRoom($event)"></RoomList>
       </div>
       <div class="content-main">
         <MessageList></MessageList>
@@ -31,9 +31,9 @@
       </div>
       <div class="right-sidebar">
         <vs-dropdown>
-          <GetChannel :channel="activeChannel"></GetChannel>
+          <GetRoom :room="activeRoom"></GetRoom>
           <vs-dropdown-menu>
-            <vs-dropdown-item divider v-for="user in usersInChannel" :key="user.id">
+            <vs-dropdown-item divider v-for="user in usersInRoom" :key="user.id">
               <GetUser :user="user"></GetUser>
             </vs-dropdown-item>
             <!-- <vs-dropdown-item divider></vs-dropdown-item> -->
@@ -50,9 +50,8 @@ import UserProfile from "@/components/users/UserProfile.vue";
 import MessageList from "@/components/messages/MessageList.vue";
 import MessagesList from "@/components/messages/MessagesList.vue";
 import MessageInput from "@/components/messages/MessageInput.vue";
-import ChannelList from "@/components/channels/ChannelList.vue";
-import Channel from "@/components/channels/Channel.vue";
-import GetChannel from "@/components/channels/GetChannel.vue";
+import RoomList from "@/components/rooms/RoomList.vue";
+import GetRoom from "@/components/rooms/GetRoom.vue";
 import UserList from "@/components/users/UserList.vue";
 import GetUser from "@/components/users/GetUser.vue";
 
@@ -69,9 +68,9 @@ export default {
     UserProfile,
     MessageList,
     MessageInput,
-    ChannelList,
+    RoomList,
     UserList,
-    GetChannel,
+    GetRoom,
     GetUser,
     VideoIcon,
     PhoneIcon,
@@ -80,9 +79,9 @@ export default {
   },
   data() {
     return {
-      activeChannel: {},
-      usersInChannel: [],
-      activeChannelTitle: '',
+      activeRoom: {},
+      usersInRoom: [],
+      activeRoomTitle: '',
       toUser: '',
       writeNewMessage: false,
       errors: [],
@@ -90,19 +89,19 @@ export default {
     };
   },
   mounted() {
-    this.addActiveChannel();
-    this.addUsersInChannel();
+    this.addActiveRoom();
+    this.addUsersInRoom();
   },
   methods: {
-    addActiveChannel() {
+    addActiveRoom() {
       let i = 1;
-      this.activeChannel = {
+      this.activeRoom = {
         id: `${i}`,
-        title: `Channel ${i}`,
+        title: `Room ${i}`,
         lastMessage: `Message ${i}`
       };
     },
-    addUsersInChannel() {
+    addUsersInRoom() {
       let isOnline = true;
       for (let i = 0; i < 10; i++) {
         if (i % 2 === 0) {
@@ -117,11 +116,11 @@ export default {
           isOnline: isOnline,
           created: new Date()
         };
-        this.usersInChannel.push(newUser);
+        this.usersInRoom.push(newUser);
       }
     },
-    updateNewTitleActiveChannel(newActiveChannel) {
-      this.activeChannelTitle = newActiveChannel.title;
+    updateNewTitleActiveroom(newActiveRoom) {
+      this.activeRoomTitle = newActiveRoom.title;
     },
     onSubmit (evt) {
       evt.preventDefault()

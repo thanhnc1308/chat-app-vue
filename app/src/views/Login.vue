@@ -62,7 +62,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     //router-view will mount component only when we call next()
     //check if already exists auth
-    if (localStorage.getItem("auth")) {
+    if (localStorage.getItem("authToken")) {
       return next({ path: "/" });
     }
     //else continue to render login
@@ -106,14 +106,14 @@ export default {
                 });
               }
             } else {
+              const { data } = res;
               localStorage.setItem("authToken", res.data.token);
+              localStorage.setItem("authUser", JSON.stringify(res.data.user));
               this.$store.dispatch("toggleAuthState", true);
               this.$store.dispatch("saveUserData", res.data.user);
 
               setAuthToken(res.data.token);
 
-              const { data } = res.data;
-              this.$root.auth = data;
               this.$vs.notify({
                 text: "Successfully login!",
                 color: "success",
@@ -135,49 +135,6 @@ export default {
       setTimeout(() => {
         this.errors = [];
       }, 1500);
-    },
-    loginUser() {
-      this.loading = true;
-      axios
-        .post(`${config.apiUrl}/api/users/login`, {
-          email: this.email,
-          password: this.password
-        })
-        .then(response => {
-          this.submitted = true;
-          this.loading = false;
-          const { data } = response.data;
-          this.$root.auth = data;
-          localStorage.setItem("auth", JSON.stringify(data));
-          this.$vs.notify({
-            text: "Successfully login!",
-            color: "success",
-            position: "top-center"
-          });
-          // this.$noty.success("Successfully login!");
-          //route user to the homepage
-          //$router is included in Vue.use(Router)
-          this.$router.push("/");
-        })
-        .catch(({ response }) => {
-          this.submitted = true;
-          this.loading = false;
-          this.$vs.notify({
-            text: "Oops, something went wrong!",
-            color: "danger",
-            position: "top-center"
-          });
-          // this.$noty.error("Oops, something went wrong!");
-          //set my own errors notiication
-          if (response.status === 401) {
-            this.errors = {
-              email: ["These credentials do not match our records"]
-            };
-          } else {
-            this.errors = response.data;
-          }
-          console.log(this.errors);
-        });
     }
   }
 };

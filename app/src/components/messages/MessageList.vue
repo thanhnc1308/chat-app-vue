@@ -1,12 +1,11 @@
 <template>
   <div>
     <div class="messages" v-if="messages">
-      <transition-group name="slideDown">
-        <VuePerfectScrollbar v-chat-scroll class="scroll-area" :settings="settings">
-        <Message v-for="message in messages" :key="message.id" :message="message"/>
+      <VuePerfectScrollbar v-chat-scroll class="scroll-area" :settings="settings">
+        <transition-group name="slide">
+          <Message v-for="message in messages" :key="message.id" :message="message"/>
+        </transition-group>
       </VuePerfectScrollbar>
-      </transition-group>
-      
     </div>
   </div>
 </template>
@@ -14,14 +13,14 @@
 <script>
 import Message from "@/components/messages/Message.vue";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
-import io from 'socket.io-client';
-import { mapGetters } from 'vuex';
+import io from "socket.io-client";
+import { mapGetters } from "vuex";
 
 export default {
   // props: ["messages"],
   computed: {
-        ...mapGetters(['getUserData'])
-    },
+    ...mapGetters(["getUserData"])
+  },
   data() {
     return {
       messages: [],
@@ -30,15 +29,15 @@ export default {
         //perfect scrollbar settings
         maxScrollbarLength: 60,
         wheelSpeed: 0.6
-      },
+      }
     };
   },
   created() {
-        this.user = this.getUserData;
-    },
+    this.user = this.getUserData;
+  },
   components: {
     Message,
-    VuePerfectScrollbar,
+    VuePerfectScrollbar
   },
   mounted() {
     this.addTestMessage();
@@ -46,9 +45,9 @@ export default {
   },
   methods: {
     scrollMessages() {
-            var container = this.$refs.messages;
-            container.scrollTop = container.scrollHeight;
-        },
+      var container = this.$refs.messages;
+      container.scrollTop = container.scrollHeight;
+    },
     addTestMessage() {
       let isMe = false;
 
@@ -65,12 +64,12 @@ export default {
           content: `Hello there... ${i}`,
           avatar: "@/assets/images/avatar.png",
           admin: isMe,
-          created_at: new Date(),
+          created_at: new Date()
         };
         this.messages.push(newMsg);
       }
     }
-  },
+  }
   //   updated() {
   //       this.scrollMessages();
   //   }
@@ -98,5 +97,28 @@ export default {
     width: 100%;
     height: 100%;
   }
+}
+
+// transition
+.slide-enter-active {
+  transition: all 1s;
+}
+
+.slide-leave-active {
+  transition: all 1s;
+}
+
+.slide-enter-to,
+.slide-leave {
+  //  max-height: 100px;
+  //  overflow: hidden;
+}
+
+.slide-enter,
+.slide-leave-to {
+  //  overflow: hidden;
+  //  max-height: 0;
+  opacity: 0;
+  transform: translateY(30px);
 }
 </style>

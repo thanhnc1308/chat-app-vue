@@ -1,18 +1,20 @@
 <template>
-  <div class="channel" :channel-id="channel.id" @click="activeChannel()" @mouseenter="isHover = true" @mouseleave="isHover = false" :class="{'active' : isActive, 'hover' : isHover}">
-    <div class="channel-image">
-      <vs-avatar text="channel.title" />
+  <div class="room" :room-id="room.id" @click="activeroom()" @mouseenter="isHover = true" @mouseleave="isHover = false" :class="{'active' : isActive, 'hover' : isHover}">
+    <div class="room-image">
+      <vs-avatar text="room.title" />
     </div>
-    <div class="channel-info">
-      <div class="channel-title">{{channel.title}}</div>
-      <p>{{channel.lastMessage}}</p>
+    <div class="room-info">
+      <div class="room-title">{{room.title}}</div>
+      <p>{{room.lastMessage}}</p>
     </div>
   </div>
 </template>
 
 <script>
+import config from "@/config";
+
 export default {
-  props: ["channel", "isActive"],
+  props: ["room", "isActive"],
   data() {
     return {
       isHover: false,
@@ -21,8 +23,8 @@ export default {
   computed: {
   },
   methods: {
-    activeChannel() {
-      this.$emit('changeActiveChannel', this.channel.id);
+    activeroom() {
+      this.$emit('changeActiveroom', this.room.id);
     }
   },
 };
@@ -38,17 +40,17 @@ export default {
   background-color: rgba(0, 0, 0, .05);
 }
 
-.channel {
+.room {
   cursor: pointer;
   display: flex;
   border-bottom: 1px solid $border-color;
   padding: 8px;
   padding-bottom: 0;
-  .channel-image {
+  .room-image {
     img {
       max-width: 100%;
     }
-    .channel-avatars {
+    .room-avatars {
       overflow: hidden;
       width: 30px;
       height: 30px;
@@ -56,14 +58,14 @@ export default {
       background-color: #ccc;
       position: relative;
 
-      &.channel-avatars-1 {
+      &.room-avatars-1 {
         img {
           width: 100%;
           height: 100%;
           border-radius: 50%;
         }
       }
-      &.channel-avatars-2 {
+      &.room-avatars-2 {
         img {
           width: 50%;
           height: 100%;
@@ -76,7 +78,7 @@ export default {
           }
         }
       }
-      &.channel-avatars-3 {
+      &.room-avatars-3 {
         img {
           position: absolute;
           width: 50%;
@@ -98,7 +100,7 @@ export default {
           }
         }
       }
-      &.channel-avatars-4 {
+      &.room-avatars-4 {
         img {
           position: absolute;
           width: 50%;
@@ -127,7 +129,7 @@ export default {
       }
     }
   }
-  .channel-info {
+  .room-info {
     flex-grow: 1;
     padding-left: 8px;
     padding-right: 8px;
@@ -150,7 +152,7 @@ export default {
     background: rgba(0, 0, 0, 0.05);
   }
   &.notify {
-    .channel-info {
+    .room-info {
       p {
         color: $primary-color;
       }

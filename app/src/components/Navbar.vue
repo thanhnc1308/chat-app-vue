@@ -1,8 +1,8 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-navbar">
+  <nav :key="authToken" class="navbar navbar-expand-lg navbar-light bg-navbar">
     <router-link class="navbar-brand" to="/">
-        <!-- <img src="@/assets/images/logo.png" width="30px" height="30px" alt="" srcset=""> -->
-        <h5 style="color: #fff;">ChatApp</h5>
+      <!-- <img src="@/assets/images/logo.png" width="30px" height="30px" alt="" srcset=""> -->
+      <h5 style="color: #fff;">ChatApp</h5>
     </router-link>
     <button
       class="navbar-toggler"
@@ -49,29 +49,41 @@
 
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
-    mounted() {
-        // console.log(this.$root)
+  data() {
+    return {
+      authToken: localStorage.getItem('authToken'),
+    };
+  },
+  mounted() {},
+  computed: {
+    authUser() {
+      // return this.$store.getUserData;
+      return JSON.parse(localStorage.getItem("authUser"));
+    }
+  },
+  methods: {
+    logout() {
+      //clean data from localStorage
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("authUser");
+      //clean data from this.$root
+      this.$root.auth = {};
+      this.$noty.success("Successfully logout!");
+
+      this.$router.push("/login");
     },
-    computed: {
-        authUser() {
-            return this.$root.auth.user
-        }
-    },
-    methods: {
-      logout() {
-        //clean data from localStorage
-        localStorage.removeItem('auth');
-        //clean data from this.$root
-        this.$root.auth = {};
-        this.$noty.success("Successfully logout!");
-      },
-    },
-}
+    forceRerender() {
+      this.componentKey += 1;
+    }
+  }
+};
 </script>
 
 <style scoped>
 .navbar {
-      z-index: 10;
+  z-index: 10;
 }
 </style>

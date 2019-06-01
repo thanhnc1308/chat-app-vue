@@ -63,7 +63,7 @@ let socket = null;
 
 /** Socket IO Client - Store in Vuex State for use in components */
 if (process.env.NODE_ENV === 'development') {
-    socket = io('http://localhost:5000');
+    socket = io('http://localhost:3001');
 } else {
     socket = io('/');
 }

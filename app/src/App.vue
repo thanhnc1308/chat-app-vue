@@ -5,14 +5,27 @@
         <Navbar></Navbar>
       </div>
     </div>
-    <div>
-      <router-view></router-view>
-    </div>
+    <!-- <div> -->
+    <transition
+      appear
+      :name="transitionName"
+      :enter-active-class="enterActive"
+      :leave-active-class="leaveActive"
+      class="trans-duration"
+      mode="out-in"
+    >
+      <router-view/>
+    </transition>
+    <!-- </div> -->
   </div>
 </template>
 
 <script>
 import Navbar from "@/components/Navbar.vue";
+import _ from "lodash";
+const DEFAULT_TRANSITION = "fade";
+const DEFAULT_ENTER_ACTIVE_CLASS = "animated fadeIn fast";
+const DEFAULT_LEAVE_ACTIVE_CLASS = "animated fadeOut fast";
 
 export default {
   name: "app",
@@ -21,13 +34,44 @@ export default {
   },
   data() {
     return {
-      
+      transitionName: DEFAULT_TRANSITION,
+      leaveActive: DEFAULT_LEAVE_ACTIVE_CLASS,
+      enterActive: DEFAULT_ENTER_ACTIVE_CLASS
     };
   },
+  methods: {
+    resetTransition() {
+      this.transitionName = DEFAULT_TRANSITION;
+      this.enterActive = DEFAULT_ENTER_ACTIVE_CLASS;
+      this.leaveActive = DEFAULT_LEAVE_ACTIVE_CLASS;
+    }
+  },
+  created() {
+    this.$router.beforeEach((to, from, next) => {
+      if (!_.isEmpty(to.meta)) {
+        if (to.meta.transitionName) {
+          this.transitionName = to.meta.transitionName;
+        }
+
+        if (to.meta.enterActive) {
+          this.enterActive = to.meta.enterActive;
+        }
+
+        if (to.meta.leaveActive) {
+          this.leaveActive = to.meta.leaveActive;
+        }
+      }
+
+      if (!to.meta.requiresAuth) {
+        this.resetTransition();
+      }
+      next();
+    });
+  }
 };
 </script>
 
-<style>
+<style lang="scss">
 * {
   font-family: "Poppins";
 }
@@ -46,4 +90,8 @@ body {
   overflow: hidden;
 }
 
+.trans-duration {
+  animation-duration: 10s;
+  animation-delay: 10s;
+}
 </style>

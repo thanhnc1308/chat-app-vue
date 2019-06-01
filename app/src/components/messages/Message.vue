@@ -5,10 +5,15 @@
     </div>
     <div class="message-body">
       <div class="message-author">{{message.admin ? 'You' : message.user}}</div>
-      <div class="message-text">
-        <span>{{message.content}}</span>
-        <span>{{ moment(message.created_at).fromNow() }}</span>
-      </div>
+
+      <vs-tooltip
+        :position="message.admin ? 'right' : 'left'"
+        :text="moment(message.created_at).fromNow()"
+      >
+        <div class="message-text">
+          <span>{{message.content}}</span>
+        </div>
+      </vs-tooltip>
     </div>
   </div>
 </template>
@@ -22,7 +27,7 @@ export default {
       // return `${time.getHours()}:${leftPad(time.getMinutes(), 2, '0')}`;
     },
     getAuthor() {
-      return this.message.admin ? 'You' : this.message.user;
+      return this.message.admin ? "You" : this.message.user;
     }
   }
 };
@@ -30,7 +35,6 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/assets/scss/variable.scss";
-
 
 .message {
   display: flex;
@@ -48,7 +52,6 @@ export default {
 
   .message-body {
     .message-author {
-
     }
 
     .message-text {
