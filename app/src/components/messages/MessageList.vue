@@ -154,7 +154,7 @@ export default {
     VuePerfectScrollbar
   },
   mounted() {
-    // this.addTestMessage();
+    this.addTestMessage();
     // this.scrollMessages();
   },
   methods: {

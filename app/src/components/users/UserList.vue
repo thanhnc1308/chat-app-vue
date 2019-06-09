@@ -32,6 +32,7 @@ export default {
     VuePerfectScrollbar
   },
   mounted() {
+    this.addTestUsers();
     if (this.getCurrentRoom) {
       this.users = this.getCurrentRoom.users;
     }
@@ -41,6 +42,18 @@ export default {
       this.activeUser = newActiveUserId;
       this.$emit('changeTitleActiveUser', this.users[newActiveUserId]);
     },
+    addTestUsers() {
+      for (let i = 0; i < 10; i++) {
+
+        const newMsg = {
+          id: `${i}`,
+          username: `Thanh ${i}`,
+          isOnline: true,
+          created: new Date()
+        };
+        this.users.push(newMsg);
+      }
+    }
   }
 };
 </script>
