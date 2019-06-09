@@ -6,7 +6,7 @@
         mode="out-in"
     >
         <div v-if="this.errors" v-show="this.errors.length !== 0" class="form__error">
-            <transition-group
+            <transition-group tag="div" class="err"
                 name="fade"
                 enter-active-class="animated fadeIn"
                 leave-active-class="animated fadeOut"

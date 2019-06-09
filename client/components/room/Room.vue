@@ -151,6 +151,7 @@ import Sidebar from '@/components/layout/Sidebar.vue';
 import Modal from '@/components/layout/Modal.vue';
 import Error from '@/components/error/Error.vue';
 import { mapActions, mapGetters } from 'vuex';
+import config from '@/config';
 
 export default {
     name: 'Room',
@@ -216,7 +217,7 @@ export default {
                 e.preventDefault();
             }
             axios
-                .post('/api/room/remove/users', {
+                .post(`${config.apiUrl}/api/room/remove/users`, {
                     room_name: this.getCurrentRoom.name
                 })
                 .then(res => {
