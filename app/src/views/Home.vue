@@ -123,6 +123,7 @@ export default {
     this.fetchRoomData();
   },
   computed: {
+    ...mapGetters(['getUserData', 'getCurrentRoom', 'getSocket']),
     // activeRoom() {
     //   axios
     //     .get(`${config.apiUrl}/api/room/${this.$route.params.id}`)
@@ -191,7 +192,7 @@ export default {
             this.$store.dispatch("addRoom", res.data);
             this.room_name = null;
             this.password = null;
-            this.writeNewMessage = false; //close popup
+            this.startNewConversation = false; //close popup
             this.$vs.notify({
               text: "Successfully created!",
               color: "success",
@@ -201,6 +202,7 @@ export default {
           }
         })
         .catch(err => {
+          this.startNewConversation = false; //close popup
           this.$vs.notify({
             text: "An error has occured!",
             color: "success",

@@ -13,7 +13,6 @@
 export default {
   props: ["room"],
   mounted() {
-    debugger
   },
   computed: {}
 };

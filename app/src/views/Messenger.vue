@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="messenger">
     <div class="content-main">
       <MessageList></MessageList>
       <MessageInput v-if="activeRoom"></MessageInput>
@@ -59,8 +59,6 @@ export default {
   computed: {
     activeRoom: {
       get: function() {
-        // this.room = null;
-        // debugger;
         axios
           .get(`${config.apiUrl}/api/room/${this.$route.params.id}`)
           .then(res => {
@@ -82,7 +80,6 @@ export default {
           .get(`${config.apiUrl}/api${(to.path)}`)
           .then(res => {
             this.room = res.data;
-            debugger
           })
           .catch(err => {
             console.log(err);
@@ -195,84 +192,9 @@ export default {
 <style lang="scss">
 @import "@/assets/scss/variable.scss";
 
-.app-messenger {
+.messenger {
   display: flex;
-  flex-direction: column;
-  height: calc(100vh - 50px); // - height of navbar
-  overflow: hidden;
-  .header {
-    height: $header-height;
-    display: flex;
-    flex-direction: row;
-    border-bottom: 1px solid $border-color;
-    .left-header {
-      min-width: $left-sidebar-width;
-      .actions {
-        line-height: $header-height;
-        display: flex;
-        position: relative;
-
-        .ic-settings {
-          position: absolute;
-          font-size: 22px;
-          top: $header-height/4;
-          left: 5px;
-          cursor: pointer;
-        }
-
-        .title-messenger {
-          font-size: 16px;
-          line-height: $header-height;
-          margin: 0 auto;
-        }
-
-        .ic-edit {
-          position: absolute;
-          font-size: 22px;
-          top: $header-height/4;
-          right: 5px;
-          cursor: pointer;
-        }
-      }
-    }
-
-    .content-header {
-      flex-grow: 1;
-      h2 {
-        line-height: $header-height;
-        text-align: center;
-      }
-      .inputx {
-        margin-top: 5px;
-      }
-    }
-
-    .right-header {
-      min-width: $right-sidebar-width;
-      .actions {
-        display: flex;
-        justify-content: flex-end;
-        vertical-align: middle;
-        margin-top: 10px;
-        .custom-class {
-          margin-right: 10px;
-          cursor: pointer;
-        }
-      }
-    }
-  }
-
-  .main {
-    display: flex;
-    height: calc(100% - 50px); //$header-height
-    overflow: hidden;
-    .left-sidebar {
-      min-width: $left-sidebar-width;
-      border-right: 1px solid $border-color;
-      height: 100%;
-      // overflow-y: auto;
-    }
-
+  
     .content-main {
       flex-grow: 1;
       flex-direction: column;
@@ -285,21 +207,5 @@ export default {
       border-left: 1px solid $border-color;
       overflow-y: hidden;
     }
-  }
-}
-
-.footer-popup {
-  text-align: center;
-
-  button {
-    margin-right: 10px;
-  }
-}
-
-.popup-individual {
-  .vs-input-primary {
-    width: 100% !important;
-    margin-top: 10px;
-  }
 }
 </style>

@@ -75,14 +75,14 @@ export default {
           }
         }
         /** Socket IO: User join event, get latest messages from room */
-        // this.getSocket.emit("userJoined", {
-        //   room: this.getCurrentRoom,
-        //   user: this.getUserData,
-        //   content: `${this.getUserData.handle} joined ${
-        //     this.getCurrentRoom.name
-        //   }`,
-        //   admin: true
-        // });
+        this.getSocket.emit("userJoined", {
+          room: this.getCurrentRoom,
+          user: this.getUserData,
+          content: `${this.getUserData.handle} joined ${
+            this.getCurrentRoom.name
+          }`,
+          admin: true
+        });
 
         /** Socket IO: Received New User Event */
         this.getSocket.on("updateRoomData", data => {
@@ -128,7 +128,6 @@ export default {
         /** Socket IO: New Messaage Event - Append the new message to the messages array */
         this.getSocket.on("receivedNewMessage", message => {
           this.messages.push(JSON.parse(message));
-          debugger
         });
 
         /** Socket IO: User Typing Event  */

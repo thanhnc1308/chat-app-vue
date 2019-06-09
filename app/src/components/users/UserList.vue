@@ -2,17 +2,17 @@
   <div>
     <div class="users" v-if="users">
       <VuePerfectScrollbar class="scroll-area" :settings="settings">
-        <div v-for="user in users" :key="user.id" class="user" :user-id="user.id" @click="activeUser()" @mouseenter="isHover = true" @mouseleave="isHover = false" :class="{'active' : isActive, 'hover' : isHover}">
+        <div v-for="user in users" :key="user.lookup._id" class="user" :user-id="user.lookup._id" @click="activeUser()" @mouseenter="isHover = true" @mouseleave="isHover = false" :class="{'active' : isActive, 'hover' : isHover}">
           <div class="user-image">
-            <vs-avatar  :text="user.username"/>
-            <span :class="['user-status', {'online' : user.isOnline}]"></span>
+            <vs-avatar  :text="user.lookup.username"/>
+            <span :class="['user-status', {'online' : true}]"></span>
           </div>
           <div class="user-info">
             <h5>
-              {{user.username}}
-              <font-awesome-icon :class="['user-status',{'online' : user.isOnline}]" icon="circle"/>
+              {{user.lookup.username}}
+              <font-awesome-icon :class="['user-status',{'online' : true}]" icon="circle"/>
             </h5>
-            <p>Joined: {{calcJoinTime(user.created)}}</p>
+            <!-- <p>Joined: {{calcJoinTime(user.created)}}</p> -->
           </div>
         </div>
       </VuePerfectScrollbar>
@@ -45,7 +45,9 @@ export default {
     VuePerfectScrollbar
   },
   mounted() {
+    debugger
     if (this.getCurrentRoom) {
+      debugger
       this.users = this.getCurrentRoom.users;
     }
   },
@@ -94,6 +96,7 @@ export default {
   padding: 8px;
   .user-image {
     width: 30px;
+    margin-top: 5px;
     position: relative;
     img {
       width: 30px;
@@ -107,6 +110,7 @@ export default {
 
     h5 {
       font-size: 14px;
+      margin-top: 17px;
 
       .user-status {
         font-size: 6px;
