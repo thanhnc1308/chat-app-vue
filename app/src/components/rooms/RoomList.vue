@@ -4,14 +4,14 @@
       <VuePerfectScrollbar class="scroll-area" :settings="settings">
         <Room
           @changeActiveRoom="changeActiveRoom($event)"
-          :isActive="room.id === activeRoom.id"
+          :isActive="room._id === activeRoom._id"
           v-for="room in filteredRooms"
           :key="room.id"
           :room="room"
         />
       </VuePerfectScrollbar>
     </div>
-    <div v-else>No Conversation</div>
+    <div v-else style="text-align: center; margin-top: 20px;">No Conversation</div>
   </div>
 </template>
 

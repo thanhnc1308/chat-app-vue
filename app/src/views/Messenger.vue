@@ -149,6 +149,7 @@ export default {
     this.fetchRoomData();
   },
   computed: {
+    ...mapGetters(["getUserData", "getRoomData", "getSocket"]),
     // activeRoom() {
     //   axios
     //     .get(`${config.apiUrl}/api/room/${this.$route.params.id}`)
@@ -194,13 +195,13 @@ export default {
     },
     createNewConversation() {
       // e.preventDefault(e);
-
       axios
         .post(`${config.apiUrl}/api/room`, {
           room_name: this.conversationName,
           password: this.conversationPassword
         })
         .then(res => {
+          debugger
           if (res.data.errors) {
             for (const error of res.data.errors) {
               const [value] = Object.values(error);
@@ -210,7 +211,7 @@ export default {
             this.$store.dispatch("addRoom", res.data);
             this.room_name = null;
             this.password = null;
-            this.writeNewMessage = false; //close popup
+            this.startNewConversation = false; //close popup
             this.$vs.notify({
               text: "Successfully created!",
               color: "success",
@@ -220,12 +221,14 @@ export default {
           }
         })
         .catch(err => {
+          debugger
+          this.startNewConversation = false; //close popup
           this.$vs.notify({
             text: "An error has occured!",
             color: "success",
             position: "top-center"
           });
-          console.log(err);
+          // console.log(err);
         });
 
       setTimeout(() => {
