@@ -1,10 +1,10 @@
 <template>
   <div class="room">
     <div class="room-image">
-      <vs-avatar text="room.title"/>
+      <vs-avatar :text="room.name"/>
     </div>
     <div class="room-info">
-      <div class="room-title">{{room.title}}</div>
+      <div class="room-title">{{room.name}}</div>
     </div>
   </div>
 </template>

@@ -1,12 +1,12 @@
 <template>
   <div class="user" :user-id="user.id" @click="activeUser()" @mouseenter="isHover = true" @mouseleave="isHover = false" :class="{'active' : isActive, 'hover' : isHover}">
     <div class="user-image">
-      <vs-avatar  text="user.name"/>
+      <vs-avatar  :text="user.username"/>
       <span :class="['user-status', {'online' : user.isOnline}]"></span>
     </div>
     <div class="user-info">
       <h5>
-        {{user.name}}
+        {{user.username}}
         <font-awesome-icon :class="['user-status',{'online' : user.isOnline}]" icon="circle"/>
       </h5>
       <p>Joined: {{calcJoinTime(user.created)}}</p>

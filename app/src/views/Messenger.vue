@@ -5,12 +5,20 @@
         <div class="actions">
           <font-awesome-icon class="ic-settings" icon="cog"/>
           <h5 class="title-messenger">Messenger</h5>
-          <font-awesome-icon @click="writeNewMessage = !writeNewMessage" class="ic-edit" icon="edit"/>
+          <font-awesome-icon @click="startNewConversation = true" class="ic-edit" icon="edit"/>
         </div>
       </div>
       <div class="content-header">
         <h2 v-if="!writeNewMessage">{{activeRoomTitle}}</h2>
-        <vs-input v-else @keyup.enter="onSubmit()" v-model.trim="room.room_name" @blur="writeNewMessage = false" class="inputx" placeholder="Write message to..." v-model="toUser"/>
+        <vs-input
+          v-else
+          @keyup.enter="onSubmit()"
+          v-model.trim="room.room_name"
+          @blur="writeNewMessage = false"
+          class="inputx"
+          placeholder="Write message to..."
+          v-model="toUser"
+        />
       </div>
       <div class="right-header">
         <div class="actions">
@@ -27,11 +35,11 @@
       <div class="content-main">
         <MessageList></MessageList>
         <!-- <MessagesList></MessagesList> -->
-        <MessageInput></MessageInput>
+        <MessageInput v-if="activeRoom"></MessageInput>
       </div>
       <div class="right-sidebar">
         <vs-dropdown>
-          <GetRoom :room="activeRoom"></GetRoom>
+          <GetRoom v-if="activeRoom" :room="activeRoom"></GetRoom>
           <vs-dropdown-menu>
             <vs-dropdown-item divider v-for="user in usersInRoom" :key="user.id">
               <GetUser :user="user"></GetUser>
@@ -42,6 +50,49 @@
         <UserList></UserList>
       </div>
     </div>
+
+    <!-- popup write new conversation -->
+    <vs-popup class="holamundo" title="New Conversation" :active.sync="startNewConversation">
+      <vs-tabs>
+        <vs-tab label="Individual">
+          <div class="popup-individual">
+            <vs-input
+              label="Name"
+              placeholder="Enter Conversation Name"
+              v-model.trim="conversationName"
+            />
+            <vs-input
+              type="password"
+              label="Password"
+              placeholder="Enter Conversation Password"
+              pattern=".{5,10}"
+              title="Password must be between 5 and 15 characters"
+              v-model.trim="conversationPassword"
+            />
+            <Error :errors="errors"/>
+          </div>
+        </vs-tab>
+        <vs-tab label="Group Chat">
+          <div class="popup-individual">
+            <vs-input label="Name" placeholder="Enter Group Name" v-model.trim="conversationName"/>
+            <vs-input
+              type="password"
+              label="Password"
+              placeholder="Enter Group Password"
+              pattern=".{5,10}"
+              title="Password must be between 5 and 15 characters"
+              v-model.trim="conversationPassword"
+            />
+            <Error :errors="errors"/>
+          </div>
+        </vs-tab>
+      </vs-tabs>
+      <vs-divider></vs-divider>
+      <div class="footer-popup">
+        <vs-button @click="createNewConversation()" color="danger" type="filled">Create</vs-button>
+        <vs-button @click="startNewConversation = false" color="dark" type="border">Close</vs-button>
+      </div>
+    </vs-popup>
   </div>
 </template>
 
@@ -54,14 +105,15 @@ import RoomList from "@/components/rooms/RoomList.vue";
 import GetRoom from "@/components/rooms/GetRoom.vue";
 import UserList from "@/components/users/UserList.vue";
 import GetUser from "@/components/users/GetUser.vue";
+import Error from "@/components/error/Error.vue";
 
 import { VideoIcon } from "vue-feather-icons";
 import { PhoneIcon } from "vue-feather-icons";
 import { MoreHorizontalIcon } from "vue-feather-icons";
+import { mapActions, mapGetters } from 'vuex';
 
-import config from '@/config';
-
-// import eventBus from '@/main.js';
+import axios from "axios";
+import config from "@/config";
 
 export default {
   components: {
@@ -76,63 +128,125 @@ export default {
     PhoneIcon,
     MoreHorizontalIcon,
     MessagesList,
+    Error
   },
   data() {
     return {
-      activeRoom: {},
+      // activeRoom: {},
       usersInRoom: [],
-      activeRoomTitle: '',
-      toUser: '',
+      startNewConversation: false,
+      conversationName: "",
+      conversationPassword: "",
+      activeRoomTitle: "",
+      toUser: "",
+      activeRoom: '',
       writeNewMessage: false,
       errors: [],
-      room: {},
+      room: {}
     };
   },
   mounted() {
-    this.addActiveRoom();
-    this.addUsersInRoom();
+    this.fetchRoomData();
+  },
+  computed: {
+    // activeRoom() {
+    //   axios
+    //     .get(`${config.apiUrl}/api/room/${this.$route.params.id}`)
+    //     .then(res => {
+    //       return res.data;
+    //     });
+    // }
   },
   methods: {
-    addActiveRoom() {
-      let i = 1;
-      this.activeRoom = {
-        id: `${i}`,
-        title: `Room ${i}`,
-        lastMessage: `Message ${i}`
-      };
-    },
-    addUsersInRoom() {
-      let isOnline = true;
-      for (let i = 0; i < 10; i++) {
-        if (i % 2 === 0) {
-          isOnline = true;
-        } else {
-          isOnline = false;
+    ...mapActions(['updateRoomData', 'addRoom', 'deleteRoom', 'saveCurrentRoom']),
+    checkLingeringUser(data) {
+      for (const room of data) {
+        if (room.users.some(room => room._id === this.getUserData._id)) {
+          return true;
         }
-
-        const newUser = {
-          id: `${i}`,
-          name: `User ${i}`,
-          isOnline: isOnline,
-          created: new Date()
-        };
-        this.usersInRoom.push(newUser);
       }
+      return false;
+    },
+    fetchRoomData() {
+      axios
+        .get(`${config.apiUrl}/api/room`)
+        .then(res => {
+          if (this.checkLingeringUser(res.data)) {
+            return axios.put(`${config.apiUrl}/api/room/remove/users/all`, {
+              user_id: this.getUserData._id
+              
+            });
+          } else {
+            this.$store.dispatch("updateRoomData", res.data);
+            this.$store.dispatch('saveCurrentRoom', res.data[0]);
+            // this.rooms = res.data;
+            this.activeRoom = res.data[0];
+          }
+        })
+        .then(res => {
+          if (res && res.data) {
+            this.rooms = res.data;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    createNewConversation() {
+      // e.preventDefault(e);
+
+      axios
+        .post(`${config.apiUrl}/api/room`, {
+          room_name: this.conversationName,
+          password: this.conversationPassword
+        })
+        .then(res => {
+          if (res.data.errors) {
+            for (const error of res.data.errors) {
+              const [value] = Object.values(error);
+              this.errors.push(value);
+            }
+          } else {
+            this.$store.dispatch("addRoom", res.data);
+            this.room_name = null;
+            this.password = null;
+            this.writeNewMessage = false; //close popup
+            this.$vs.notify({
+              text: "Successfully created!",
+              color: "success",
+              position: "top-center"
+            });
+            this.getSocket.emit("roomAdded", res.data);
+          }
+        })
+        .catch(err => {
+          this.$vs.notify({
+            text: "An error has occured!",
+            color: "success",
+            position: "top-center"
+          });
+          console.log(err);
+        });
+
+      setTimeout(() => {
+        this.errors = [];
+      }, 1500);
     },
     updateNewTitleActiveroom(newActiveRoom) {
       this.activeRoomTitle = newActiveRoom.title;
     },
-    onSubmit (evt) {
-      evt.preventDefault()
-      axios.post(`${config.apiUrl}/api/room`, this.room)
-      .then(response => {
-        this.$router.push({
-          name: 'RoomList'
+    onSubmit(evt) {
+      evt.preventDefault();
+      axios
+        .post(`${config.apiUrl}/api/room`, this.room)
+        .then(response => {
+          this.$router.push({
+            name: "RoomList"
+          });
         })
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
+        .catch(e => {
+          this.errors.push(e);
+        });
     }
   }
 };
@@ -231,6 +345,21 @@ export default {
       border-left: 1px solid $border-color;
       overflow-y: hidden;
     }
+  }
+}
+
+.footer-popup {
+  text-align: center;
+
+  button {
+    margin-right: 10px;
+  }
+}
+
+.popup-individual {
+  .vs-input-primary {
+    width: 100% !important;
+    margin-top: 10px;
   }
 }
 </style>

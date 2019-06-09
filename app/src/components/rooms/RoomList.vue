@@ -1,16 +1,17 @@
 <template>
   <div>
-    <div v-if="rooms" class="rooms">
+    <div v-if="filteredRooms.length > 0" class="rooms">
       <VuePerfectScrollbar class="scroll-area" :settings="settings">
         <Room
           @changeActiveRoom="changeActiveRoom($event)"
-          :isActive="room.id === activeRoom"
-          v-for="room in rooms"
+          :isActive="room.id === activeRoom.id"
+          v-for="room in filteredRooms"
           :key="room.id"
           :room="room"
         />
       </VuePerfectScrollbar>
     </div>
+    <div v-else>No Conversation</div>
   </div>
 </template>
 
@@ -105,6 +106,7 @@ export default {
           } else {
             this.$store.dispatch("updateRoomData", res.data);
             this.rooms = res.data;
+            this.activeRoom = this.rooms[0];
           }
         })
         .then(res => {

@@ -22,22 +22,23 @@
         <button class="btn btn-outline-dark my-2 my-sm-0" type="submit">Search</button>
       </form>
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item active" v-if="!authUser">
+        <li class="nav-item active" v-if="!authToken">
           <router-link class="nav-link" to="/login">Login</router-link>
         </li>
-        <li class="nav-item active" v-if="!authUser">
+        <li class="nav-item active" v-if="!authToken">
           <router-link class="nav-link" to="/signup">Signup</router-link>
         </li>
-        <li class="nav-item dropdown" v-if="authUser">
-          <a
-            class="nav-link dropdown-toggle"
+        <li class="nav-item dropdown" v-if="authUser && authToken">
+          <UserProfile
+            :authUser="authUser"
             href="#"
             id="navbarDropdown"
             role="button"
             data-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
-          >{{ authUser.name }}</a>
+          ></UserProfile>
+          <!-- <UserProfile :authUser="authUser"></UserProfile> -->
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
             <a class="dropdown-item" @click="logout" href="#">Log out</a>
           </div>
@@ -50,34 +51,54 @@
 
 <script>
 import { mapGetters } from "vuex";
+import UserProfile from "@/components/users/UserProfile.vue";
 
 export default {
   data() {
     return {
-      authToken: localStorage.getItem('authToken'),
+      
     };
   },
-  mounted() {},
+  mounted() {
+
+  },
   computed: {
     authUser() {
-      // return this.$store.getUserData;
-      return JSON.parse(localStorage.getItem("authUser"));
+      let authUser = JSON.parse(localStorage.getItem("authUser"));
+      if (authUser != null) {
+        this.$store.dispatch("saveUserData", authUser);
+      } else {
+        this.$store.dispatch("saveUserData", '');
+      }
+      return this.$store.getters.getUserData;
+      
+    },
+    authToken() {
+      let authToken = localStorage.getItem('authToken');
+      if (authToken != null) {
+        this.$store.dispatch("toggleAuthState", true);
+      } else {
+        this.$store.dispatch("toggleAuthState", false);
+      }
+      return this.$store.getters.isAuthorized;
     }
   },
   methods: {
     logout() {
       //clean data from localStorage
       localStorage.removeItem("authToken");
+      this.$store.dispatch("saveUserData", '');
       localStorage.removeItem("authUser");
+      this.$store.dispatch("toggleAuthState", false);
       //clean data from this.$root
       this.$root.auth = {};
       this.$noty.success("Successfully logout!");
 
       this.$router.push("/login");
     },
-    forceRerender() {
-      this.componentKey += 1;
-    }
+  },
+  components: {
+    UserProfile,
   }
 };
 </script>

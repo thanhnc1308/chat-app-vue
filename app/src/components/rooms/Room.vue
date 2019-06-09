@@ -1,17 +1,18 @@
 <template>
   <div class="room" :room-id="room.id" @click="activeroom()" @mouseenter="isHover = true" @mouseleave="isHover = false" :class="{'active' : isActive, 'hover' : isHover}">
     <div class="room-image">
-      <vs-avatar text="room.title" />
+      <vs-avatar :text="room.name" />
     </div>
     <div class="room-info">
-      <div class="room-title">{{room.title}}</div>
-      <p>{{room.lastMessage}}</p>
+      <div class="room-title">{{room.name}}</div>
+      <p style="font-style: italic;">Last updated: {{moment(room.updated_at).fromNow()}}</p>
     </div>
   </div>
 </template>
 
 <script>
 import config from "@/config";
+import moment from "moment";
 
 export default {
   props: ["room", "isActive"],
@@ -41,8 +42,8 @@ export default {
 }
 
 .room {
-  cursor: pointer;
   display: flex;
+  cursor: pointer;
   border-bottom: 1px solid $border-color;
   padding: 8px;
   padding-bottom: 0;

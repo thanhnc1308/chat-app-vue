@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="users">
+    <div class="users" v-if="users">
       <VuePerfectScrollbar class="scroll-area" :settings="settings">
         <User @changeActiveUser="changeActiveUser($event)" v-for="user in users" :key="user.id" :user="user"/>
       </VuePerfectScrollbar>
@@ -11,8 +11,12 @@
 <script>
 import User from "@/components/users/User.vue";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
+  computed: {
+    ...mapGetters(['getUserData', 'getCurrentRoom', 'getSocket']),
+  },
   data() {
     return {
       users: [],
@@ -28,27 +32,11 @@ export default {
     VuePerfectScrollbar
   },
   mounted() {
-    this.addTestUsers();
+    if (this.getCurrentRoom) {
+      this.users = this.getCurrentRoom.users;
+    }
   },
   methods: {
-    addTestUsers() {
-      let isOnline = true;
-      for (let i = 0; i < 10; i++) {
-        if (i % 2 === 0) {
-          isOnline = true;
-        } else {
-          isOnline = false;
-        }
-
-        const newUser = {
-          id: `${i}`,
-          name: `User ${i}`,
-          isOnline: isOnline,
-          created: new Date()
-        };
-        this.users.push(newUser);
-      }
-    },
     changeActiveUser(newActiveUserId) {
       this.activeUser = newActiveUserId;
       this.$emit('changeTitleActiveUser', this.users[newActiveUserId]);

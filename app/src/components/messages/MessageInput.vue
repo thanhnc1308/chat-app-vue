@@ -61,11 +61,14 @@ export default {
             }
         },
         sendMessage() {
+          debugger
             this.getSocket.emit('newMessage', {
                 room: this.getCurrentRoom,
-                user: this.getUserData,
+                // user: this.getUserData,
+                user: JSON.parse(localStorage.getItem('authUser')),
                 content: this.inputMessage
             });
+            debugger
             this.inputMessage = '';
             this.sendUserNotTyping();
         },
