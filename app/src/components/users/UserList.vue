@@ -45,9 +45,7 @@ export default {
     VuePerfectScrollbar
   },
   mounted() {
-    debugger
     if (this.getCurrentRoom) {
-      debugger
       this.users = this.getCurrentRoom.users;
     }
   },

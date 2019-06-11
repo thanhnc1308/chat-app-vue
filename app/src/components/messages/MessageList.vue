@@ -6,16 +6,15 @@
           <div
             v-for="message in messages"
             :key="message.id"
-            :class="{'message' : true, 'me': message.admin}"
+            :class="{'message' : true, 'me': !message.admin && message.user && message.user._id === user._id}"
           >
-            <div class="message-user-image">
-              <vs-avatar :text="message.admin ? 'You' : message.user.username.charAt(0).toUpperCase()"/>
+            <div v-if="message.user" class="message-user-image">
+              <vs-avatar :text="message.user && message.user._id === user._id ? 'You' : message.user.username.charAt(0).toUpperCase()"/>
             </div>
-            <div class="message-body">
-              <div class="message-author">{{message.admin ? 'You' : message.user.username}}</div>
-
+            <div v-if="message.user" class="message-body">
+              <div class="message-author">{{message.user && message.user._id === user._id ? 'You' : message.user.username}}</div>
               <vs-tooltip
-                :position="message.admin ? 'right' : 'left'"
+                :position="message.user && message.user._id === user._id ? 'right' : 'left'"
                 :text="moment(message.created_at).fromNow()"
               >
                 <div class="message-text">

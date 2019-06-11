@@ -100,6 +100,7 @@ export default {
     },
     created() {
         this.user = this.getUserData;
+        debugger
     },
     methods: {
         scrollMessages() {
@@ -109,6 +110,7 @@ export default {
     },
     mounted() {
         this.scrollMessages();
+        debugger
     },
     updated() {
         this.scrollMessages();
