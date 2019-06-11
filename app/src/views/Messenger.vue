@@ -8,12 +8,12 @@
       <vs-dropdown>
         <GetRoom v-if="activeRoom" :room="activeRoom"></GetRoom>
         <vs-dropdown-menu>
-          <vs-dropdown-item divider v-for="user in usersInRoom" :key="user.id">
+          <vs-dropdown-item divider v-for="user in users" :key="user.id">
             <GetUser :user="user"></GetUser>
           </vs-dropdown-item>
         </vs-dropdown-menu>
       </vs-dropdown>
-      <UserList></UserList>
+      <UserList :users="users"></UserList>
     </div>
   </div>
 </template>
@@ -41,7 +41,7 @@ export default {
   },
   data() {
     return {
-      usersInRoom: [],
+      users: [],
       startNewConversation: false,
       conversationName: "",
       conversationPassword: "",
@@ -51,6 +51,7 @@ export default {
       writeNewMessage: false,
       errors: [],
       room: null,
+      usersTyping: ""
     };
   },
   mounted() {
@@ -72,18 +73,34 @@ export default {
       set: function(newRoom) {
         this.room = newRoom;
       }
+    },
+    ...mapGetters(["getUserData", "getCurrentRoom", "getSocket"]),
+    filteredUsers() {
+      return this.users
+        .slice()
+        .sort(this.sortAlphabetical)
+        .filter(user =>
+          user.lookup.username
+            .toLowerCase()
+            .includes(this.searchInput.toLowerCase())
+        );
+    },
+    getUsersTyping() {
+      if (this.usersTyping.length > 0) {
+        return `${this.usersTyping.join(", ")} is typing...`;
+      }
     }
   },
   watch: {
-    '$route' (to, from) {
+    $route(to, from) {
       axios
-          .get(`${config.apiUrl}/api${(to.path)}`)
-          .then(res => {
-            this.room = res.data;
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        .get(`${config.apiUrl}/api${to.path}`)
+        .then(res => {
+          this.room = res.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   },
   methods: {
@@ -184,7 +201,219 @@ export default {
         .catch(e => {
           this.errors.push(e);
         });
+    },
+    ...mapActions(["saveCurrentRoom"]),
+    checkUserTabs(room) {
+      if (
+        room &&
+        room.users.findIndex(
+          user => user.lookup._id === this.getUserData._id
+        ) === -1
+      ) {
+        this.$router.push({ name: "RoomList" });
+      }
+    },
+    sortAlphabetical(a, b) {
+      let userA = a.lookup.username.toUpperCase();
+      let userB = b.lookup.username.toUpperCase();
+      if (userA < userB) {
+        return -1;
+      }
+      if (userA > userB) {
+        return 1;
+      }
+      return 0;
+    },
+    leaveRoom(e, newPage) {
+      if (e) {
+        e.preventDefault();
+      }
+      axios
+        .post(`${config.apiUrl}/api/room/remove/users`, {
+          room_name: this.getCurrentRoom.name
+        })
+        .then(res => {
+          if (
+            this.room.access ||
+            this.room.accessIds.includes(this.getUserData._id)
+          ) {
+            this.getSocket.emit("exitRoom", {
+              room: res.data,
+              user: null,
+              admin: true,
+              content: `${this.getUserData.handle} left ${
+                this.getCurrentRoom.name
+              }`
+            });
+          }
+          this.roomLeft = true;
+          if (!newPage) {
+            this.$router.push({ name: "RoomList" });
+          }
+        });
+    },
+    openEditRoom() {
+      this.$refs.editRoom.open();
+    },
+    handleEditRoom(e) {
+      e.preventDefault();
+      axios
+        .post(`${config.apiUrl}/api/room/update/name`, {
+          room_name: this.getCurrentRoom.name,
+          new_room_name: this.newRoomName
+        })
+        .then(res => {
+          if (res.data.errors) {
+            for (const error of res.data.errors) {
+              const [key] = Object.keys(error);
+              const [value] = Object.values(error);
+              this.errors.push({
+                key,
+                value
+              });
+            }
+          } else {
+            this.$refs.editRoom.close();
+            this.getSocket.emit("roomUpdateEvent", {
+              oldRoomName: this.getCurrentRoom.name,
+              room: res.data
+            });
+            this.getSocket.emit("newMessage", {
+              room: this.getCurrentRoom,
+              user: this.getUserData,
+              admin: true,
+              content: `${this.getUserData.username} updated room ${
+                this.getCurrentRoom.name
+              } to ${this.newRoomName}`
+            });
+            this.newRoomName = "";
+          }
+
+          setTimeout(() => {
+            this.errors = [];
+          }, 1500);
+        })
+        .catch(err => console.log(err));
+    },
+    viewRoomDetails() {
+      this.$refs.roomDetails.open();
+    },
+    toggleUserList() {
+      this.$refs.userList.toggle();
+      this.sidebarVisible = !this.sidebarVisible;
     }
+  },
+  created() {
+    axios
+      .get(`${config.apiUrl}/api/room/${this.$route.params.id}`)
+      .then(res => {
+        this.room = res.data;
+        this.users = res.data.users;
+        this.$store.dispatch("saveCurrentRoom", res.data);
+
+        /** Check for private access and access Id */
+        if (!res.data.access) {
+          if (
+            !res.data.accessIds.includes(this.getUserData._id) &&
+            this.getUserData._id !== res.data.user.lookup._id
+          ) {
+            return this.$router.push({
+              name: "RoomList",
+              params: { message: "You do not have access to this room" }
+            });
+          }
+        }
+        /** Socket IO: User join event, get latest messages from room */
+        this.getSocket.emit("userJoined", {
+          room: this.getCurrentRoom,
+          user: this.getUserData,
+          content: `${this.getUserData.handle} joined ${
+            this.getCurrentRoom.name
+          }`,
+          admin: true
+        });
+
+        /** Socket IO: Received New User Event */
+        this.getSocket.on("updateRoomData", data => {
+          data = JSON.parse(data);
+          if (data.messages) {
+            this.messages = data.messages;
+          }
+
+          if (data.room) {
+            this.room = data.room;
+            this.users = data.room.users;
+            this.$store.dispatch("saveCurrentRoom", data.room);
+          }
+        });
+
+        /** Socket IO: Reconnect User Event */
+        this.getSocket.on("reconnect", () => {
+          this.usersTyping = [];
+          this.getSocket.emit("reconnectUser", {
+            room: this.getCurrentRoom,
+            user: this.getUserData
+          });
+        });
+
+        this.getSocket.on("reconnected", () => {
+          console.warn("Reconnected");
+        });
+
+        this.getSocket.on("disconnect", () => {
+          console.warn("Disconnected");
+        });
+
+        /** Socket IO: User Exit Event - Update User List */
+        this.getSocket.on("updateUserList", data => {
+          this.users = JSON.parse(data).users;
+        });
+
+        /** Socket IO: User Exit Event - Check other tabs of the same room and redirect */
+        this.getSocket.on("receivedUserExit", room => {
+          this.checkUserTabs(room);
+        });
+
+        /** Socket IO: New Messaage Event - Append the new message to the messages array */
+        this.getSocket.on("receivedNewMessage", message => {
+          this.messages.push(JSON.parse(message));
+        });
+
+        /** Socket IO: User Typing Event  */
+        this.getSocket.on("receivedUserTyping", data => {
+          this.usersTyping = JSON.parse(data).filter(
+            user => user !== this.getUserData.handle
+          );
+        });
+
+        /** Socket IO: Room Deleted Event - Redirect all users */
+        this.getSocket.on("roomDeleted", () => {
+          this.$store.dispatch("saveCurrentRoom", null);
+          setTimeout(() => {
+            this.$router.push({ name: "RoomList" });
+          }, 2000);
+        });
+
+        /** Socket IO: Room Updated Event */
+        this.getSocket.on("roomUpdated", data => {
+          this.room = JSON.parse(data).room;
+          this.$store.dispatch("saveCurrentRoom", JSON.parse(data).room);
+        });
+      })
+      .catch(err => {
+        if (err.response.status === 404) {
+          this.$router.push({
+            name: "RoomList",
+            params: { message: "This room does not exist or has been deleted" }
+          });
+        }
+      });
+  },
+  beforeDestroy() {
+    if (this.getCurrentRoom && !this.roomLeft) {
+      this.leaveRoom(null, true);
+    }
+    this.getSocket.removeListener("userJoined");
   }
 };
 </script>
@@ -194,18 +423,18 @@ export default {
 
 .messenger {
   display: flex;
-  
-    .content-main {
-      flex-grow: 1;
-      flex-direction: column;
-      height: 100%;
-      width: calc(100vw - 600px);
-    }
 
-    .right-sidebar {
-      min-width: $right-sidebar-width;
-      border-left: 1px solid $border-color;
-      overflow-y: hidden;
-    }
+  .content-main {
+    flex-grow: 1;
+    flex-direction: column;
+    height: 100%;
+    width: calc(100vw - 600px);
+  }
+
+  .right-sidebar {
+    min-width: $right-sidebar-width;
+    border-left: 1px solid $border-color;
+    overflow-y: hidden;
+  }
 }
 </style>

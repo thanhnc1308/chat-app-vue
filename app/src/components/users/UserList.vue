@@ -29,9 +29,10 @@ export default {
   computed: {
     ...mapGetters(['getUserData', 'getCurrentRoom', 'getSocket']),
   },
+  props: ['users'],
   data() {
     return {
-      users: [],
+      // users: [],
       isHover: false,
       isActive: false,
       settings: {
@@ -46,7 +47,7 @@ export default {
   },
   mounted() {
     if (this.getCurrentRoom) {
-      this.users = this.getCurrentRoom.users;
+      // this.users = this.getCurrentRoom.users;
     }
   },
   methods: {
@@ -55,10 +56,6 @@ export default {
     },
     activeUser() {
       this.$emit('changeActiveUser', this.user.id);
-    },
-    changeActiveUser(newActiveUserId) {
-      this.activeUser = newActiveUserId;
-      this.$emit('changeTitleActiveUser', this.users[newActiveUserId]);
     },
   }
 };
