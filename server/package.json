@@ -9,7 +9,7 @@
         "test:watch": "jest --coverage --config ./jest.config.js --notify --watchAll",
         "test:local": "jest --coverage --config ./jest.config.js --notify",
         "test:ci": "jest --coverage --config ./jest.config.js --forceExit",
-        "dev": "nodemon server.js",
+        "dev": "nodemon --inspect server.js",
         "start": "node server.js"
     },
     "author": "Lu-Vuong <lu-vuongle@hotmail.com>",

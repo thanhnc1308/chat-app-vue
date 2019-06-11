@@ -2,13 +2,25 @@
   <div>
     <div v-if="filteredRooms.length > 0" class="rooms">
       <VuePerfectScrollbar class="scroll-area" :settings="settings">
-        <Room
-          @changeActiveRoom="changeActiveRoom($event)"
-          :isActive="room._id === activeRoom._id"
+        <a
           v-for="room in filteredRooms"
           :key="room.id"
-          :room="room"
-        />
+          :href="`room/${room._id}`"
+          class="room"
+          :room-id="room.id"
+          @click.prevent="handleRoomClick(room)"
+          @mouseenter="isHover = true"
+          @mouseleave="isHover = false"
+          :class="{'active' : isActive, 'hover' : isHover}"
+        >
+          <div class="room-image">
+            <vs-avatar :text="room.name"/>
+          </div>
+          <div class="room-info">
+            <div class="room-title">{{room.name}}</div>
+            <p style="font-style: italic;">Last updated: {{moment(room.updated_at).fromNow()}}</p>
+          </div>
+        </a>
       </VuePerfectScrollbar>
     </div>
     <div v-else style="text-align: center; margin-top: 20px;">No Conversation</div>
@@ -16,12 +28,12 @@
 </template>
 
 <script>
-import Room from "@/components/rooms/Room.vue";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
 import config from "@/config";
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 import Error from "@/components/error/Error.vue";
+import moment from "moment";
 
 export default {
   data() {
@@ -31,7 +43,9 @@ export default {
       room_name: null,
       privateRoomName: null,
       password: null,
+      isHover: false,
       privateRoomPassword: null,
+      isActive: false,
       searchInput: "",
       activeRoom: 0,
       settings: {
@@ -42,7 +56,6 @@ export default {
     };
   },
   components: {
-    Room,
     VuePerfectScrollbar,
     Error
   },
@@ -122,7 +135,7 @@ export default {
       this.$refs.createRoom.open();
     },
     enterRoom(room) {
-      this.$router.push({ name: "Room", params: { id: room._id } });
+      this.$router.push({ name: "Messenger", params: { id: room._id } });
     },
     handleCreateRoom(e) {
       e.preventDefault();
@@ -212,19 +225,25 @@ export default {
         })
         .catch(err => console.log(err));
     },
-    addTestrooms() {
-      for (let i = 0; i < 10; i++) {
-        const newroom = {
-          id: `${i}`,
-          title: `room ${i}`,
-          lastMessage: `Message ${i}`
-        };
-        this.rooms.push(newroom);
-      }
-    },
     changeActiveroom(newActiveroomId) {
       this.activeroom = newActiveroomId;
       this.$emit("changeTitleActiveroom", this.rooms[newActiveroomId]);
+    },
+    enterRoom(room) {
+      this.$router.push({ name: "Messenger", params: { id: room._id } });
+    },
+    handleRoomClick(room) {
+      if (
+        room.access ||
+        this.getUserData._id === room.user._id ||
+        room.accessIds.includes(this.getUserData._id)
+      ) {
+        this.enterRoom(room);
+      } else {
+        this.privateRoomName = room.name;
+        this.$refs.privateRoom.setData("room", room);
+        this.$refs.privateRoom.open();
+      }
     }
   },
   created() {
@@ -267,12 +286,144 @@ export default {
 .rooms {
   overflow-y: auto;
   height: calc(100vh - 50px - 58px);
-
+  a {
+    color: #000;
+    text-decoration: none;
+  }
   .scroll-area {
     position: relative;
     margin: auto;
     width: 100%;
     height: 100%;
+  }
+}
+
+@import "@/assets/scss/variable.scss";
+.active {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.room {
+  display: flex;
+  cursor: pointer;
+  border-bottom: 1px solid $border-color;
+  padding: 8px;
+  padding-bottom: 0;
+  .room-image {
+    img {
+      max-width: 100%;
+    }
+    .room-avatars {
+      overflow: hidden;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #ccc;
+      position: relative;
+
+      &.room-avatars-1 {
+        img {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+        }
+      }
+      &.room-avatars-2 {
+        img {
+          width: 50%;
+          height: 100%;
+          position: absolute;
+          right: 0;
+          top: 0;
+          &:first-child {
+            left: 0;
+            top: 0;
+          }
+        }
+      }
+      &.room-avatars-3 {
+        img {
+          position: absolute;
+          width: 50%;
+          height: 50%;
+          right: 0;
+          top: 0;
+          &:first-child {
+            left: 0;
+            top: 0;
+            width: 50%;
+            height: 100%;
+          }
+          &:last-child {
+            bottom: 0;
+            right: 0;
+            top: 15px;
+            width: 50%;
+            height: 50%;
+          }
+        }
+      }
+      &.room-avatars-4 {
+        img {
+          position: absolute;
+          width: 50%;
+          height: 50%;
+          right: 0;
+          top: 0;
+          &:first-child {
+            left: 0;
+            top: 0;
+            width: 50%;
+            height: 100%;
+          }
+          &:nth-child(3n) {
+            bottom: 0;
+            right: 0;
+            top: 15px;
+            width: 50%;
+            height: 50%;
+          }
+          &:last-child {
+            left: 0;
+            bottom: 0;
+            top: 15px;
+          }
+        }
+      }
+    }
+  }
+  .room-info {
+    flex-grow: 1;
+    padding-left: 8px;
+    padding-right: 8px;
+    overflow: hidden;
+    h2 {
+      font-size: 13px;
+      font-weight: 400;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    p {
+      font-size: 12px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+  }
+  &.active {
+    background: rgba(0, 0, 0, 0.05);
+  }
+  &.notify {
+    .room-info {
+      p {
+        color: $primary-color;
+      }
+    }
   }
 }
 </style>

@@ -2,27 +2,43 @@
   <div>
     <div class="messages" v-if="messages">
       <VuePerfectScrollbar v-chat-scroll class="scroll-area" :settings="settings">
-        <transition-group name="slide">
-          <Message v-for="message in messages" :key="message.id" :message="message"/>
-        </transition-group>
+        <!-- <transition-group name="slide" tag="div" class="messageslist"> -->
+          <div
+            v-for="message in messages"
+            :key="message.id"
+            :class="{'message' : true, 'me': !message.admin && message.user && message.user._id === user._id}"
+          >
+            <div v-if="message.user" class="message-user-image">
+              <vs-avatar :text="message.user && message.user._id === user._id ? 'You' : message.user.username.charAt(0).toUpperCase()"/>
+            </div>
+            <div v-if="message.user" class="message-body">
+              <div class="message-author">{{message.user && message.user._id === user._id ? 'You' : message.user.username}}</div>
+              <vs-tooltip
+                :position="message.user && message.user._id === user._id ? 'right' : 'left'"
+                :text="moment(message.created_at).fromNow()"
+              >
+                <div class="message-text">
+                  <span>{{message.content}}</span>
+                </div>
+              </vs-tooltip>
+            </div>
+          </div>
+        <!-- </transition-group> -->
       </VuePerfectScrollbar>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import Message from "@/components/messages/Message.vue";
+import axios from "axios";
 import VuePerfectScrollbar from "vue-perfect-scrollbar";
 import io from "socket.io-client";
-import { mapActions, mapGetters } from 'vuex';
-import config from '@/config';
+import { mapActions, mapGetters } from "vuex";
+import config from "@/config";
 
 export default {
-  // props: ["messages"],
   computed: {
-    // ...mapGetters(["getUserData"])
-    ...mapGetters(['getUserData', 'getCurrentRoom', 'getSocket']),
+    ...mapGetters(["getUserData", "getCurrentRoom", "getSocket"]),
   },
   data() {
     return {
@@ -150,21 +166,30 @@ export default {
     this.getSocket.removeListener("userJoined");
   },
   components: {
-    Message,
     VuePerfectScrollbar
   },
   mounted() {
-    this.addTestMessage();
     // this.scrollMessages();
   },
   methods: {
     ...mapActions(["saveCurrentRoom"]),
+    checkUserTabs(room) {
+      if (
+        room &&
+        room.users.findIndex(
+          user => user.lookup._id === this.getUserData._id
+        ) === -1
+      ) {
+        this.$router.push({ name: "RoomList" });
+      }
+    },
+    
     leaveRoom(e, newPage) {
       if (e) {
         e.preventDefault();
       }
       axios
-        .post("/api/room/remove/users", {
+        .post(`${config.apiUrl}/api/room/remove/users`, {
           room_name: this.getCurrentRoom.name
         })
         .then(res => {
@@ -190,32 +215,8 @@ export default {
     scrollMessages() {
       var container = this.$refs.messages;
       container.scrollTop = container.scrollHeight;
-    },
-    addTestMessage() {
-      let isMe = false;
-
-      for (let i = 0; i < 10; i++) {
-        if (i % 2 === 0) {
-          isMe = true;
-        } else {
-          isMe = false;
-        }
-
-        const newMsg = {
-          id: `${i}`,
-          user: `Thanh ${i}`,
-          content: `Hello there... ${i}`,
-          avatar: "@/assets/images/avatar.png",
-          admin: isMe,
-          created_at: new Date()
-        };
-        this.messages.push(newMsg);
-      }
     }
   }
-  //   updated() {
-  //       this.scrollMessages();
-  //   }
 };
 </script>
 
@@ -263,5 +264,44 @@ export default {
   //  max-height: 0;
   opacity: 0;
   transform: translateY(30px);
+}
+
+.message {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  margin: 15px 0;
+
+  .message-user-image {
+    img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+  }
+
+  .message-body {
+    .message-author {
+    }
+
+    .message-text {
+      background: $primary-color;
+      padding: 10px;
+      border-radius: 10px;
+      p {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &.me {
+    justify-content: flex-end;
+    .message-body {
+      .message-text {
+        background: $secondary-color;
+        color: #fff;
+      }
+    }
+  }
 }
 </style>

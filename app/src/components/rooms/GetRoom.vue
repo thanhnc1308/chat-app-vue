@@ -1,7 +1,7 @@
 <template>
   <div class="room">
     <div class="room-image">
-      <vs-avatar :text="room.name"/>
+      <vs-avatar :text="room.name.charAt(0).toUpperCase()"/>
     </div>
     <div class="room-info">
       <div class="room-title">{{room.name}}</div>
@@ -12,6 +12,8 @@
 <script>
 export default {
   props: ["room"],
+  mounted() {
+  },
   computed: {}
 };
 </script>
