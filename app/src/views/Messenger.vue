@@ -2,6 +2,11 @@
   <div class="messenger">
     <div class="content-main">
       <MessageList></MessageList>
+      <transition name="slideDown">
+        <div class="chat__utyping" v-show="usersTyping.length > 0">
+          <span>{{ getUsersTyping }}</span>
+        </div>
+      </transition>
       <MessageInput v-if="activeRoom"></MessageInput>
     </div>
     <div class="right-sidebar">
@@ -155,7 +160,7 @@ export default {
           password: this.conversationPassword
         })
         .then(res => {
-          debugger
+          debugger;
           if (res.data.errors) {
             for (const error of res.data.errors) {
               const [value] = Object.values(error);
@@ -175,7 +180,7 @@ export default {
           }
         })
         .catch(err => {
-          debugger
+          debugger;
           this.startNewConversation = false; //close popup
           this.$vs.notify({
             text: "An error has occured!",
@@ -423,6 +428,11 @@ export default {
 
 <style lang="scss">
 @import "@/assets/scss/variable.scss";
+.chat__utyping {
+  position: absolute;
+  bottom: 64px;
+  margin-left: 10px;
+}
 
 .messenger {
   display: flex;
